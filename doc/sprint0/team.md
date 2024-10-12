@@ -8,5 +8,5 @@
 
 **Discord Chat/Server Invite**: [https://discord.com/channels/@me/1291848660530761800/1291849327223771247]
 
-** Trello Link**:[https://trello.com/invite/b/670045aa814123bf825836ab/ATTI8fdf7854d330191fe8d64bc230e309b726532CD2/quizone]
+** Trello Link**:[https://trello.com/b/DgDir45X/quizone]
  
