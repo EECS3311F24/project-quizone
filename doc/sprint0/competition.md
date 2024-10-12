@@ -1,5 +1,4 @@
-Introduction: Our quiz app, QuiZone, is tailored for tech students, focusing on self-created flashcards for LeetCode questions and CS classes. Unlike platforms like NeetCode and LeetCode, which provide solutions, your app empowers users to build their own problem sets and solutions. Here's how your app compares:
-
+Introduction: Our quiz app, QuiZone, is tailored for tech students, focusing on self-created flashcards for LeetCode questions and CS classes. Unlike platforms like NeetCode and LeetCode, which provide solutions, our app empowers users to build their own problem sets and solutions.
 Existing Products:
 
 * Anki (https://apps.ankiweb.net/): A customizable flashcard app where users can create decks for any topic. However, it lacks focus on coding problems or CS-specific tools.
@@ -7,11 +6,11 @@ Existing Products:
 * LeetCode (https://leetcode.com/): Focuses on solving pre-made coding problems with solutions and discussions. While it offers a rich problem bank, users cannot create their own flashcards.
 * NeetCode (https://neetcode.io/): Provides curated coding questions with solutions for interview prep but does not allow user-generated content.
 
-How is Your Product Different?
+How is Our Product Different?
 
 * Custom Flashcards for Coding: Our app lets users create their own flashcards, allowing them to write coding questions, hints, and answers in their own words, which can help deepen understanding.
 * No Pre-Made Solutions: Instead of offering fixed solutions, your app focuses on user-driven learning, where students can create and share their own problems and solutions, encouraging active engagement.
-* Tech-Specific Features: Your app includes features that support tech subjects, such as embedding code snippets or adding interactive problem elements.
+* Tech-Specific Features: Our app includes features that support tech subjects, such as embedding code snippets or adding interactive problem elements.
 
 Target Users and Scenarios:
 
