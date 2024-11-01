@@ -1,4 +1,9 @@
 Sprint 1 RPM:
+Participants
+- Karine Davtyan
+- Tejleen Kaur
+- Shaqayeq Salimy
+* All Team members present and actively participated in meeting *
 Chosen User Stories : 
 
 As a quiz enthusiast, I want to create quizzes.
