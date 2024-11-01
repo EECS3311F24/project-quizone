@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Quiz</title>
+</head>
+<body>
+    <h1>Create a New Quiz</h1>
+    <form id="quizForm">
+        <label for="title">Quiz Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <label for="questions">Add Questions:</label>
+        <div id="questionsContainer">
+            <!-- Individual question input fields will be added here dynamically -->
+            <button type="button" onclick="addQuestion()">Add Question</button>
+        </div>
+
+        <button type="submit">Create Quiz</button>
+    </form>
+
+    <script>
+        let questionCount = 0;
+        function addQuestion() {
+            questionCount++;
+            const questionHTML = `
+                <div id="question-${questionCount}">
+                    <label for="questionText-${questionCount}">Question ${questionCount}:</label>
+                    <input type="text" id="questionText-${questionCount}" name="questions[${questionCount}][text]" required>
+
+                    <label for="options-${questionCount}">Options (comma-separated):</label>
+                    <input type="text" id="options-${questionCount}" name="questions[${questionCount}][options]" required>
+
+                    <label for="answer-${questionCount}">Correct Answer:</label>
+                    <input type="text" id="answer-${questionCount}" name="questions[${questionCount}][answer]" required>
+                </div>
+            `;
+            document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', questionHTML);
+        }
+    </script>
+</body>
+</html>
