@@ -4,7 +4,8 @@ Participants
 - Tejleen Kaur
 - Shaqayeq Salimy
 * All Team members were present and actively participated in meeting*
-Chosen User Stories : 
+
+ChosenUser Stories : 
 
 - As a quiz enthusiast, I want to create quizzes.
 - As a quiz enthusiast, I want to with customizable features like timers.
