@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Feedback</title>
+</head>
+<body>
+    <h1>Complete the Quiz</h1>
+    <form id="quizForm">
+        <p>
+            <label for="question1">What is 2 + 2?</label>
+            <input type="text" id="question1" name="question1" required>
+        </p>
+        <p>
+            <label for="question2">Capital of France?</label>
+            <input type="text" id="question2" name="question2" required>
+        </p>
+        <button type="button" onclick="submitQuiz()">Submit Answers</button>
+    </form>
+
+    <h2>Quiz Feedback</h2>
+    <div id="quizResults"></div>
+
+    <script src="feedback.js"></script>
+</body>
+</html>
