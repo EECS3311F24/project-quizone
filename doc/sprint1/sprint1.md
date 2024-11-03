@@ -6,7 +6,6 @@ Assigned to: Karine
 Tasks:
 Task 1.1: Add methods to handle question flagging.
 Task 1.2: Ensure question validation logic is updated to support quiz flagging.
-Task 1.3: Write unit tests to validate the new methods.
 
 Ticket 2: Quiz Creation and Data Storage Logic
 Assigned to: Shaqayeq
