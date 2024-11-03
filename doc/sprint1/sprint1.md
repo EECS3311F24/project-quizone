@@ -24,7 +24,7 @@ Task 3.3: Add client-side validation to the form.
 Ticket 4: Flashcard and Quiz Toggle
 Assigned to: Karine
 Tasks:
-Task 4.1: Implement a toggle feature in flashcards.html for switching between flashcard mode and quiz mode.
+Task 4.1: Implement a toggle feature in flashcards.html to switch between flashcard mode and quiz mode.
 Task 4.2: Update JavaScript logic to handle mode transitions.
 Task 4.3: Ensure mode changes reflect correctly on the frontend with appropriate CSS styles.
 
