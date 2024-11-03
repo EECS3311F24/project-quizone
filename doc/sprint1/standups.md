@@ -1,3 +1,4 @@
+<pre>
 [Standup Date: October 28, 2024] - Sprint 1 Standup 1
 Karine
 What did you work on since the last standup?
@@ -31,3 +32,4 @@ When do you think you'll be done?
 I should be done by November 3, 2024.
 Do you have any blockers?
 No blockers, just waiting for some final feedback from the team on the flashcard mode implementation.
+</pre>
