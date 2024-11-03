@@ -1,3 +1,4 @@
+<pre>
 Sprint 1 Planning meeting: All team members present and participated
 
 Ticket 1: Implement Question Model Class Enhancements
@@ -40,3 +41,4 @@ Assigned to: Shaqayeq
 Tasks:
 Task 6.1: Update styles.css for visual clarity and distinct feedback messages.
 Task 6.2: Ensure styles are applied consistently across flashcards.html, form-creation.html, and quiz-history.html.
+</pre>
