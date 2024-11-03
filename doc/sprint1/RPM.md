@@ -1,3 +1,4 @@
+<pre>
 Sprint 1 RPM:
 Participants
 - Karine Davtyan
@@ -56,3 +57,4 @@ Ticket 6: Style Enhancements
 Aligned with:
 12. As a student, I want instant feedback on my quiz attempts so that I can quickly learn from my mistakes and improve my understanding.
 7.As a quiz enthusiast, I want to create quizzes with customizable features (randomized questions, timers) so that I can challenge my friends and make each attempt unique. (Enhancing user experience)
+</pre>
