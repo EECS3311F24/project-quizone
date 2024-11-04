@@ -30,6 +30,5 @@ User-Generated Content: Unlike platforms that provide pre-made problems and solu
 - **Permissions**: Verify that `quizzes.json` and `quiz-history.json` are not read-only.
 - **Port Conflicts**: Confirm that `http://localhost:8080` is not occupied by another application.
 
-## License
-This project is licensed under the MIT License.
+
 
