@@ -23,6 +23,14 @@ User-Generated Content: Unlike platforms that provide pre-made problems and solu
 3. **Run the Spring Boot application**: Run `mvn spring-boot:run`.
 4. **Access the application**: Visit `http://localhost:8080/form-creation.html` in your web browser to view and interact with quizzes.
 
+   OR
+To run the project locally:
+Prerequisites: Ensure Java 11 or higher and Maven are installed.
+Clone the Repository: Run git clone https://github.com/EECS3311F24/project-quizone.git.
+Build the Project: Navigate to the project directory and execute mvn clean install.
+Run the Application: Use mvn spring-boot:run to start the application.
+Access the Application: Open http://localhost:8080/form-creation.html in a web browser to interact with the quizzes.
+
 ### Features Included in Sprint 1
 - **Quiz Creation**: Create quizzes with a title, description, and questions.
 - **Modes**: Switch between flashcard and quiz modes.
