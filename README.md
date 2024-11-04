@@ -13,7 +13,12 @@ User-Generated Content: Unlike platforms that provide pre-made problems and solu
 - Ensure the `quizzes.json` and `quiz-history.json` files are present and have read/write permissions.
 
 ### Running the Project
-1. **Clone the repository**: Run `git clone https://github.com/EECS3311F24/project-quizone.git` and navigate to `cd project-quizone/doc/sprint1`.
+1. **Navigate to the project directory**: Extract `QuiZoneSprint1Done.zip` located in `doc/sprint1/`.
+   - Use a file extraction tool to unzip the contents.
+   - Ensure the extracted files are placed in a directory of your choice.
+3. **Navigate to the extracted project**:
+   ```bash
+   cd path/to/extracted/QuiZoneSprint1Done
 2. **Build the project using Maven**: Run `mvn clean install`.
 3. **Run the Spring Boot application**: Run `mvn spring-boot:run`.
 4. **Access the application**: Visit `http://localhost:8080/form-creation.html` in your web browser to view and interact with quizzes.
