@@ -20,6 +20,16 @@ I expect to be done by October 30, 2024.
 Do you have any blockers?
 No blockers currently, but I need to test the integration with the JSON data files.
 
+Tejleen
+What did you work on since the last standup?
+I designed and implemented the quiz creation form in form-creation.html with input fields for quiz titles, descriptions, and questions.
+What do you commit to next?
+I will connect the form to the backend API for quiz creation.
+When do you think you'll be done?
+I plan to complete the API connection by October 29, 2024.
+Do you have any blockers?
+Not right now, but I might need assistance if there are any unexpected API connection issues.
+
 
 [Standup Date: October 31, 2024] - Sprint 1 Standup 2
 Karine
@@ -42,6 +52,16 @@ I aim to complete the style enhancements by November 1, 2024.
 Do you have any blockers?
 No blockers currently.
 
+Tejleen
+What did you work on since the last standup?
+I connected form-creation.html to the backend API for quiz creation and tested the integration.
+What do you commit to next?
+I will add client-side validation for the form to enhance user experience.
+When do you think you'll be done?
+I expect to finish this by November 1, 2024.
+Do you have any blockers?
+No blockers at the moment, but I’ll need feedback from Karine to align the frontend toggle changes with the rest of the form.
+
 [Standup Date: November 3, 2024] - Sprint 1 Standup 3
 Karine
 What did you work on since the last standup?
@@ -62,4 +82,14 @@ When do you think you'll be done?
 By November 3, 2024.
 Do you have any blockers?
 No blockers, but I’ll coordinate with Tejleen to ensure the history page is styled consistently.
+
+Tejleen
+What did you work on since the last standup?
+I finished client-side validation for form-creation.html and started developing quiz-history.html for displaying past quizzes.
+What do you commit to next?
+I will implement the backend logic to delete quiz history and ensure it integrates with the new page.
+When do you think you'll be done?
+By November 3, 2024.
+Do you have any blockers?
+No blockers at this point, but I need to test the delete functionality after backend implementation.
 </pre>
