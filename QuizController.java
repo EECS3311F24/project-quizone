@@ -14,6 +14,7 @@ import java.util.List;
  * The QuizController class provides REST endpoints for managing quizzes.
  * It allows users to retrieve, save, archive, clear, and delete quiz data.
  */
+// changes for task 2.2 has been applied
 @RestController
 public class QuizController {
 
