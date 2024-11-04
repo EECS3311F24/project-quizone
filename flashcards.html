@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Flashcards</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Quiz Flashcards</h1>
+<button id="modeToggle">Switch to Quiz Mode</button>
+<div id="timer" style="display: none; text-align: center; font-size: 20px; margin-bottom: 20px;"></div>
+<div id="flashcardContainer"></div>
+<button id="submitQuiz" style="display: none;">Submit Quiz</button>
+<div id="feedback" style="display: none;"></div>
+
+<!-- Navigation buttons -->
+<div class="navigation-buttons">
+    <button onclick="window.location.href='form-creation.html'">Create a New Quiz</button>
+    <button onclick="window.location.href='quiz-history.html'">Go to Quiz History</button>
+    <button id="archiveButton">Archive Quiz to History</button>
+</div>
+
+<script>
+    // Boolean to track the current mode (flashcard or quiz)
+    let isQuizMode = false;
+    let quizTimer; // Timer interval for quiz countdown
+    let flaggedQuestions = new Set(); // Set to store indices of flagged questions
+
+    /**
+     * Archives the current quiz and clears the quiz data.
+     * Sends a POST request to the server to archive and clear the current quiz.
+     */
+    function archiveCurrentQuiz() {
+        console.log('Attempting to archive current quiz.');
+        fetch('/archive-and-clear-quiz', {
+            method: 'POST'
+        })
+            .then(response => {
+                console.log('Received response from server:', response);
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.text();
+            })
+            .then(message => {
+                console.log('Server message:', message);
+                alert(message);
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error during archiving:', error);
+                alert(`Error: ${error.message}`);
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const modeToggle = document.getElementById('modeToggle');
+        const timerDisplay = document.getElementById('timer');
+        const flashcardContainer = document.getElementById('flashcardContainer');
+        const submitQuizButton = document.getElementById('submitQuiz');
+        const feedback = document.getElementById('feedback');
+
+        // Attach event listener to the archive button
+        document.getElementById('archiveButton').addEventListener('click', archiveCurrentQuiz);
+
+        /**
+         * Toggles between flashcard mode and quiz mode.
+         * Updates UI elements and starts/stops the timer accordingly.
+         */
+        modeToggle.addEventListener('click', () => {
+            isQuizMode = !isQuizMode;
+            modeToggle.innerText = isQuizMode ? 'Switch to Flashcard Mode' : 'Switch to Quiz Mode';
+            submitQuizButton.style.display = isQuizMode ? 'block' : 'none';
+            timerDisplay.style.display = isQuizMode ? 'block' : 'none';
+
+            if (isQuizMode) {
+                startTimer(5); // Set timer duration in minutes
+            } else {
+                clearInterval(quizTimer);
+                timerDisplay.style.display = 'none';
+            }
+
+            loadFlashcards();
+        });
+
+        /**
+         * Starts a countdown timer for the quiz.
+         * @param {number} minutes - The duration of the timer in minutes.
+         */
+        function startTimer(minutes) {
+            let timeLeft = minutes * 60;
+            timerDisplay.style.display = 'block';
+
+            quizTimer = setInterval(() => {
+                const min = Math.floor(timeLeft / 60);
+                const sec = timeLeft % 60;
+                timerDisplay.innerText = `Time Remaining: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(quizTimer);
+                    timerDisplay.innerText = "Time's up!";
+                    alert("Time's up! Please submit your answers.");
+                    submitQuizButton.click(); // Automatically trigger the quiz submission
+                }
+            }, 1000);
+        }
+
+        /**
+         * Loads the flashcards or quiz questions from the server.
+         * Updates the UI based on the mode (flashcard or quiz).
+         */
+        function loadFlashcards() {
+            flashcardContainer.innerHTML = '';
+            feedback.style.display = 'none';
+
+            fetch('/get-quizzes')
+                .then(response => response.json())
+                .then(quizzes => {
+                    if (quizzes.length === 0) {
+                        flashcardContainer.innerHTML = "<p>No quizzes found.</p>";
+                        return;
+                    }
+
+                    quizzes.forEach((quiz, quizIndex) => {
+                        quiz.questions.forEach((question, index) => {
+                            const flashcard = document.createElement('div');
+                            flashcard.classList.add('flashcard', isQuizMode ? 'quiz-mode' : 'flashcard-mode');
+
+                            // Question text display
+                            const questionText = document.createElement('div');
+                            questionText.classList.add('question');
+                            questionText.innerText = `Quiz ${quizIndex + 1}, Question ${index + 1}: ${question.text}`;
+
+                            // Flag button for flagging/unflagging questions
+                            const flagButton = document.createElement('button');
+                            flagButton.innerText = flaggedQuestions.has(index) ? 'Unflag Question' : 'Flag Question';
+                            flagButton.classList.add('flag-button');
+                            flagButton.onclick = () => toggleFlag(index, flagButton, flashcard);
+
+                            if (isQuizMode) {
+                                // Quiz mode: display options for selection
+                                const optionsContainer = document.createElement('div');
+                                optionsContainer.classList.add('options');
+
+                                question.options.forEach(option => {
+                                    const optionLabel = document.createElement('label');
+                                    optionLabel.classList.add('option-label');
+
+                                    const optionInput = document.createElement('input');
+                                    optionInput.type = 'radio';
+                                    optionInput.name = `question-${quizIndex}-${index}`;
+                                    optionInput.value = option;
+
+                                    optionLabel.appendChild(optionInput);
+                                    optionLabel.append(option);
+                                    optionsContainer.appendChild(optionLabel);
+                                });
+
+                                flashcard.appendChild(questionText);
+                                flashcard.appendChild(optionsContainer);
+                            } else {
+                                // Flashcard mode: display the correct answer on click
+                                const answerText = document.createElement('div');
+                                answerText.classList.add('answer');
+                                answerText.innerText = `Answer: ${question.correctAnswer}`;
+                                answerText.style.display = 'none';
+
+                                flashcard.appendChild(questionText);
+                                flashcard.appendChild(answerText);
+                                flashcard.addEventListener('click', () => {
+                                    answerText.style.display = answerText.style.display === 'none' ? 'block' : 'none';
+                                });
+                            }
+
+                            flashcard.appendChild(flagButton);
+                            flashcardContainer.appendChild(flashcard);
+                        });
+                    });
+
+                    if (isQuizMode) {
+                        // Event listener for quiz submission
+                        submitQuizButton.onclick = () => {
+                            clearInterval(quizTimer);
+                            let correctCount = 0;
+                            let feedbackText = '';
+
+                            quizzes.forEach((quiz, quizIndex) => {
+                                quiz.questions.forEach((question, index) => {
+                                    const selectedOption = document.querySelector(`input[name="question-${quizIndex}-${index}"]:checked`);
+                                    if (selectedOption && selectedOption.value === question.correctAnswer) {
+                                        correctCount++;
+                                    }
+                                    feedbackText += `Question ${index + 1}: ${selectedOption && selectedOption.value === question.correctAnswer ? 'Correct' : 'Incorrect'}, Correct Answer: ${question.correctAnswer}\n`;
+                                });
+                            });
+
+                            feedback.innerText = `You got ${correctCount} out of all questions correct.\n\n${feedbackText}`;
+                            feedback.style.display = 'block';
+                        };
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        /**
+         * Toggles the flag status of a question.
+         * Changes the button text and the background color of the flashcard.
+         *
+         * @param {number} index - The index of the question.
+         * @param {HTMLElement} button - The button element for toggling flag.
+         * @param {HTMLElement} flashcardElement - The flashcard element to change color.
+         */
+        function toggleFlag(index, button, flashcardElement) {
+            if (flaggedQuestions.has(index)) {
+                flaggedQuestions.delete(index);
+                flashcardElement.style.backgroundColor = '';
+                button.innerText = 'Flag Question';
+                alert(`Question ${index + 1} unflagged.`);
+            } else {
+                flaggedQuestions.add(index);
+                flashcardElement.style.backgroundColor = '#ffcccb';
+                button.innerText = 'Unflag Question';
+                alert(`Question ${index + 1} flagged.`);
+            }
+        }
+
+        // Initial load of flashcards
+        loadFlashcards();
+    });
+</script>
+</body>
+</html>
+
+
+
+
