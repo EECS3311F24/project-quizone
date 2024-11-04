@@ -15,7 +15,7 @@ import java.util.List;
  * It allows users to retrieve, save, archive, clear, and delete quiz data.
  */
 // changes for task 2.2 has been applied
-    // changes for task 2.3 has been applied
+
 @RestController
 public class QuizController {
 
@@ -30,6 +30,7 @@ public class QuizController {
      *
      * @return A list of Quiz objects, or an empty list if the file does not exist or is empty.
      */
+    // changes for Task 2.3 has been applied
     @GetMapping("/get-quizzes")
     public List<Quiz> getQuizzes() {
         System.out.println("getQuizzes() called.");
