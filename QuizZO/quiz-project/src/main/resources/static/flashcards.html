@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Flashcards</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,6 +14,12 @@
 <button id="submitQuiz" style="display: none;">Submit Quiz</button>
 <div id="feedback" style="display: none;"></div>
 
+<!-- Pause and Resume Buttons -->
+<div id="pauseResumeButtons" style="display: none;">
+    <button id="pauseButton" onclick="pauseQuiz()">Pause Quiz</button>
+    <button id="resumeButton" onclick="resumeQuiz()" style="display: none;">Resume Quiz</button>
+</div>
+
 <!-- Navigation buttons -->
 <div class="navigation-buttons">
     <button onclick="window.location.href='form-creation.html'">Create a New Quiz</button>
@@ -21,243 +28,192 @@
 </div>
 
 <script>
-    // Boolean to track the current mode (flashcard or quiz)
     let isQuizMode = false;
-    let quizTimer; // Timer interval for quiz countdown
-    let flaggedQuestions = new Set(); // Set to store indices of flagged questions
+    let quizTimer;
+    let pausedTime = 0; // Store remaining time when paused
+    let flaggedQuestions = new Set();
 
-    /**
-     * Archives the current quiz and clears the quiz data.
-     * Sends a POST request to the server to archive and clear the current quiz.
-     */
-    function archiveCurrentQuiz() {
-        console.log('Attempting to archive current quiz.');
-        fetch('/archive-and-clear-quiz', {
-            method: 'POST'
-        })
-            .then(response => {
-                console.log('Received response from server:', response);
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.text();
-            })
-            .then(message => {
-                console.log('Server message:', message);
-                alert(message);
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error('Error during archiving:', error);
-                alert(`Error: ${error.message}`);
-            });
+    // Timer display and start functionality
+    function startTimer(duration) {
+        let timeLeft = duration;
+        const timerDisplay = document.getElementById('timer');
+        timerDisplay.style.display = 'block';
+
+        quizTimer = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.innerText = `Time Remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            timeLeft--;
+
+            if (timeLeft < 0) {
+                clearInterval(quizTimer);
+                timerDisplay.innerText = "Time's up!";
+                alert("Time's up! Please submit your answers.");
+                document.getElementById("submitQuiz").click();
+            }
+        }, 1000);
+
+        return quizTimer;
     }
-
-    document.addEventListener("DOMContentLoaded", function() {
+    function pauseQuiz() {
+        clearInterval(quizTimer); // Stop the timer
+        const timerText = document.getElementById('timer').innerText;
+        pausedTime = parseTimeRemaining(timerText); // Save remaining time
+        document.getElementById('pauseButton').style.display = 'none';
+        document.getElementById('resumeButton').style.display = 'block';
+    }
+    
+    function resumeQuiz() {
+        startTimer(pausedTime); // Restart timer from paused time
+        document.getElementById('resumeButton').style.display = 'none';
+        document.getElementById('pauseButton').style.display = 'block';
+    }
+            
+    function parseTimeRemaining(timerText) {
+        const timeParts = timerText.replace("Time Remaining: ", "").split(":");
+        const minutes = parseInt(timeParts[0]);
+        const seconds = parseInt(timeParts[1]);
+        return minutes * 60 + seconds;
+    }
+                
+    function submitQuiz() {
+        clearInterval(quizTimer); // Stop the timer
+             
+        let correctCount = 0;
+        let totalCount = 0;
+        let feedbackText = "";
+     
+        // Fetch quiz questions from the server
+         fetch('/get-quizzes')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch quizzes.');
+                }
+                return response.json();
+            })
+            .then(quizzes => {
+                quizzes.forEach((quiz, quizIndex) => {
+                    quiz.questions.forEach((question, index) => {
+                        totalCount++;
+                        const selectedOption = document.querySelector(`input[name="question-${quizIndex}-${index}"]:checked`);
+                        if (selectedOption && selectedOption.value === question.correctAnswer) {
+                            correctCount++;
+                        }
+                        feedbackText += `Question ${index + 1}: ${selectedOption && selectedOption.value === question.correctAnswer ? "Correct" : "Incorrect"}\n`;
+                    });
+                });
+        
+                // Display feedback
+                const feedback = document.getElementById("feedback");
+                feedback.innerText = `You got ${correctCount} out of ${totalCount} questions correct.\n\n${feedbackText}`;
+                feedback.style.display = "block";  
+             
+                alert("Quiz submitted successfully!");
+            })
+            .catch(error => { 
+                console.error("Error submitting quiz:", error);
+                alert("An error occurred while submitting the quiz.");
+          });
+    }
+                
+    document.addEventListener("DOMContentLoaded", function () { 
         const modeToggle = document.getElementById('modeToggle');
         const timerDisplay = document.getElementById('timer');
         const flashcardContainer = document.getElementById('flashcardContainer');
         const submitQuizButton = document.getElementById('submitQuiz');
-        const feedback = document.getElementById('feedback');
-
-        // Attach event listener to the archive button
+        const pauseResumeButtons = document.getElementById('pauseResumeButtons');
+                    
         document.getElementById('archiveButton').addEventListener('click', archiveCurrentQuiz);
-
-        /**
-         * Toggles between flashcard mode and quiz mode.
-         * Updates UI elements and starts/stops the timer accordingly.
-         */
+                        
         modeToggle.addEventListener('click', () => {
             isQuizMode = !isQuizMode;
             modeToggle.innerText = isQuizMode ? 'Switch to Flashcard Mode' : 'Switch to Quiz Mode';
             submitQuizButton.style.display = isQuizMode ? 'block' : 'none';
             timerDisplay.style.display = isQuizMode ? 'block' : 'none';
-
+            pauseResumeButtons.style.display = isQuizMode ? 'block' : 'none';
+        
             if (isQuizMode) {
-                startTimer(5); // Set timer duration in minutes
+                startTimer(5 * 60); // Example: Start 5-minute timer 
             } else {
                 clearInterval(quizTimer);
                 timerDisplay.style.display = 'none';
             }
-
-            loadFlashcards();
+              
+            loadFlashcards(); 
         });
-
-        /**
-         * Starts a countdown timer for the quiz.
-         * @param {number} minutes - The duration of the timer in minutes.
-         */
-        function startTimer(minutes) {
-            let timeLeft = minutes * 60;
-            timerDisplay.style.display = 'block';
-
-            quizTimer = setInterval(() => {
-                const min = Math.floor(timeLeft / 60);
-                const sec = timeLeft % 60;
-                timerDisplay.innerText = `Time Remaining: ${min}:${sec < 10 ? '0' : ''}${sec}`;
-                timeLeft--;
-
-                if (timeLeft < 0) {
-                    clearInterval(quizTimer);
-                    timerDisplay.innerText = "Time's up!";
-                    alert("Time's up! Please submit your answers.");
-                    submitQuizButton.click(); // Automatically trigger the quiz submission
-                }
-            }, 1000);
-        }
-
-        /**
-         * Loads the flashcards or quiz questions from the server.
-         * Updates the UI based on the mode (flashcard or quiz).
-         */
+    submitQuizButton.addEventListener("click", submitQuiz);
+     
         function loadFlashcards() {
-            flashcardContainer.innerHTML = '';
-            feedback.style.display = 'none';
-
+            flashcardContainer.innerHTML = "";
             fetch('/get-quizzes')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch quizzes.');   
+                    }
+                    return response.json();
+                })
                 .then(quizzes => {
                     if (quizzes.length === 0) {
                         flashcardContainer.innerHTML = "<p>No quizzes found.</p>";
                         return;
                     }
-
+            
                     quizzes.forEach((quiz, quizIndex) => {
                         quiz.questions.forEach((question, index) => {
-                            const flashcard = document.createElement('div');
-                            flashcard.classList.add('flashcard', isQuizMode ? 'quiz-mode' : 'flashcard-mode');
-
-                            // Question text display
-                            const questionText = document.createElement('div');
-                            questionText.classList.add('question');
+                            const flashcard = document.createElement("div");
+                            flashcard.classList.add("flashcard", isQuizMode ? "quiz-mode" : "flashcard-mode");
+            
+                            const questionText = document.createElement("div");
+                            questionText.classList.add("question");
                             questionText.innerText = `Quiz ${quizIndex + 1}, Question ${index + 1}: ${question.text}`;
-
-                            // Flag button for flagging/unflagging questions
-                            const flagButton = document.createElement('button');
-                            flagButton.innerText = flaggedQuestions.has(index) ? 'Unflag Question' : 'Flag Question';
-                            flagButton.classList.add('flag-button');
-                            flagButton.onclick = () => toggleFlag(index, flagButton, flashcard);
-
+              
                             if (isQuizMode) {
-                                // Quiz mode: display options for selection
-                                const optionsContainer = document.createElement('div');
-                                optionsContainer.classList.add('options');
+                                const optionsContainer = document.createElement("div");
+                                optionsContainer.classList.add("options");
 
+       
                                 question.options.forEach(option => {
-                                    const optionLabel = document.createElement('label');
-                                    optionLabel.classList.add('option-label');
-
-                                    const optionInput = document.createElement('input');
-                                    optionInput.type = 'radio';
+                                    const optionLabel = document.createElement("label");
+                                    const optionInput = document.createElement("input");
+            
+                                    optionInput.type = "radio";
                                     optionInput.name = `question-${quizIndex}-${index}`;
                                     optionInput.value = option;
-
+                     
                                     optionLabel.appendChild(optionInput);
                                     optionLabel.append(option);
                                     optionsContainer.appendChild(optionLabel);
                                 });
-
+                        
                                 flashcard.appendChild(questionText);
                                 flashcard.appendChild(optionsContainer);
                             } else {
-                                // Flashcard mode: display the correct answer on click
-                                const answerText = document.createElement('div');
-                                answerText.classList.add('answer');
-                                answerText.innerText = `Answer: ${question.correctAnswer}`;
-                                answerText.style.display = 'none';
-
                                 flashcard.appendChild(questionText);
-                                flashcard.appendChild(answerText);
-                                flashcard.addEventListener('click', () => {
-                                    answerText.style.display = answerText.style.display === 'none' ? 'block' : 'none';
-                                });
                             }
-
-                            flashcard.appendChild(flagButton);
+                            
                             flashcardContainer.appendChild(flashcard);
                         });
                     });
-
-                    if (isQuizMode) {
-                        submitQuizButton.onclick = () => {
-                            clearInterval(quizTimer);
-                            let correctCount = 0;
-                            let totalQuestions = 0;
-                            let feedbackText = '';
-
-                            let submittedQuiz = null; // Variable to hold the quiz data with score
-
-                            quizzes.forEach((quiz, quizIndex) => {
-                                totalQuestions += quiz.questions.length;
-
-                                // Clone the quiz object to include the score
-                                submittedQuiz = { ...quiz, score: 0 }; // Initialize score
-
-                                quiz.questions.forEach((question, index) => {
-                                    const selectedOption = document.querySelector(`input[name="question-${quizIndex}-${index}"]:checked`);
-                                    if (selectedOption && selectedOption.value === question.correctAnswer) {
-                                        correctCount++;
-                                    }
-                                    feedbackText += `Question ${index + 1}: ${selectedOption && selectedOption.value === question.correctAnswer ? 'Correct' : 'Incorrect'}, Correct Answer: ${question.correctAnswer}\n`;
-                                });
-
-                                // Calculate the score as a percentage
-                                submittedQuiz.score = Math.round((correctCount / totalQuestions) * 100);
-                            });
-
-                            feedback.innerText = `You got ${correctCount} out of ${totalQuestions} questions correct.\nYour score: ${submittedQuiz.score}%\n\n${feedbackText}`;
-                            feedback.style.display = 'block';
-
-                            // Send the quiz with the score to the server
-                            fetch('/submit-quiz', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(submittedQuiz)
-                            })
-                                .then(response => response.text())
-                                .then(message => {
-                                    console.log('Server response:', message);
-                                    alert(message);
-                                })
-                                .catch(error => console.error('Error submitting quiz:', error));
-                        };
-                    }
                 })
                 .catch(error => {
-                    console.error('Error fetching quizzes:', error);
-                }); // Close the fetch call properly
+                    console.error("Error loading flashcards:", error);
+                    flashcardContainer.innerHTML = "<p>Error loading quizzes. Please try again later.</p>";
+                });
         }
-
-        /**
-         * Toggles the flag status of a question.
-         * Changes the button text and the background color of the flashcard.
-         *
-         * @param {number} index - The index of the question.
-         * @param {HTMLElement} button - The button element for toggling flag.
-         * @param {HTMLElement} flashcardElement - The flashcard element to change color.
-         */
-        function toggleFlag(index, button, flashcardElement) {
-            if (flaggedQuestions.has(index)) {
-                flaggedQuestions.delete(index);
-                flashcardElement.style.backgroundColor = '';
-                button.innerText = 'Flag Question';
-                alert(`Question ${index + 1} unflagged.`);
-            } else {
-                flaggedQuestions.add(index);
-                flashcardElement.style.backgroundColor = '#ffcccb';
-                button.innerText = 'Unflag Question';
-                alert(`Question ${index + 1} flagged.`);
-            }
+     
+        function archiveCurrentQuiz() {
+            fetch("/archive-and-clear-quiz", { method: "POST" })
+                .then(response => response.text())
+                .then(message => alert(message))
+                .catch(error => alert(`Error: ${error.message}`));
         }
-
-        // Initial load of flashcards
+                                    
         loadFlashcards();
     });
 </script>
 </body>
 </html>
-
-
-
+                        
+                                
+                                
+          
