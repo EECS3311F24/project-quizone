@@ -224,35 +224,74 @@ public class QuizController {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Submits the quiz results, including the score, archives the quiz, and clears the current quiz.
+     *
+     * @param quiz The Quiz object with updated score.
+     * @return A success or failure message.
+     */
     @PostMapping("/submit-quiz")
-public String submitQuiz(@RequestBody Quiz quiz) {
-    int score = 0;
-    for (Question question : quiz.getQuestions()) {
-        if (question.getSelectedAnswer() != null && 
-            question.getSelectedAnswer().equals(question.getCorrectAnswer())) {
-            score++;
+    public String submitQuiz(@RequestBody Quiz quiz) {
+        System.out.println("submitQuiz() called with quiz: " + quiz.getTitle() + " and score: " + quiz.getScore());
+        try {
+            // Archive the quiz with the score
+            archiveQuizWithScore(quiz);
+
+            // Clear the current quizzes
+            try (FileWriter writer = new FileWriter(FILE_PATH)) {
+                writer.write("[]");
+                System.out.println("quizzes.json cleared after submission.");
+            }
+
+            return "Quiz submitted and archived successfully!";
+        } catch (Exception e) {
+            System.out.println("Exception occurred in submitQuiz().");
+            e.printStackTrace();
+            return "Failed to submit the quiz.";
         }
     }
-    quiz.setScore(score);
-    archiveQuizWithScore(quiz);
-    return "Quiz submitted successfully with a score of " + score;
-}
+    /**
+     * Archives a quiz with the score to the quiz-history.json file.
+     *
+     * @param quiz The Quiz object with the score to archive.
+     */
+    private void archiveQuizWithScore(Quiz quiz) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            List<Quiz> archivedQuizzes = new ArrayList<>();
 
-private void archiveQuizWithScore(Quiz quiz) {
-    try {
-        List<Quiz> quizHistory = getQuizHistory();
-        quizHistory.add(quiz);
-        ObjectMapper mapper = new ObjectMapper();
-        try (FileWriter writer = new FileWriter(ARCHIVE_FILE_PATH)) {
-            mapper.writeValue(writer, quizHistory);
+            // Read existing archive if it exists
+            if (Files.exists(Paths.get(ARCHIVE_FILE_PATH))) {
+                System.out.println("quiz-history.json exists. Reading existing archive.");
+                byte[] archiveData = Files.readAllBytes(Paths.get(ARCHIVE_FILE_PATH));
+
+                if (archiveData.length > 0) {
+                    Quiz[] existingArchive = mapper.readValue(archiveData, Quiz[].class);
+                    archivedQuizzes.addAll(Arrays.asList(existingArchive));
+                    System.out.println("Existing archive loaded successfully.");
+                } else {
+                    System.out.println("quiz-history.json is empty.");
+                }
+            } else {
+                System.out.println("quiz-history.json does not exist. It will be created.");
+            }
+
+            // Add the new quiz with score to the archive
+            archivedQuizzes.add(quiz);
+            System.out.println("Quiz with score added to archive.");
+
+            // Save the updated archive
+            try (FileWriter archiveWriter = new FileWriter(ARCHIVE_FILE_PATH)) {
+                mapper.writeValue(archiveWriter, archivedQuizzes);
+                System.out.println("Archive updated successfully with new quiz.");
+            }
+        } catch (IOException e) {
+            System.out.println("IOException occurred while archiving quiz with score.");
+            e.printStackTrace();
         }
-    } catch (IOException e) {
-        e.printStackTrace();
     }
 }
-
-}
-
 
 
 
