@@ -124,4 +124,26 @@ public class Quiz {
     public void setRandomize(Boolean randomize) {
         this.randomize = randomize;
     }
+
+     // The calculated score for the quiz based on the user's answers.
+    @JsonProperty("score")
+    private int score;
+
+    /**
+     * Retrieves the score for the quiz.
+     *
+     * @return the score of the quiz
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
+     * Sets the score for the quiz.
+     *
+     * @param score the calculated score to set
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
 }
