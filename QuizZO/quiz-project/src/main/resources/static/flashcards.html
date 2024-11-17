@@ -228,6 +228,36 @@
         // Initial load of flashcards
         loadFlashcards();
     });
+
+
+    <!-- 
+    flashcards.html 
+    Allows users to take a quiz and view graded results upon submission.
+-->
+
+
+    /**
+     * Handles the quiz submission process.
+     * Sends the quiz data to the backend for grading and displays the results upon completion.
+     */
+    document.getElementById('submitQuiz').onclick = function () {
+        const quizData = { /* Collect quiz data and selected answers */ };
+        
+        // Submit the quiz data to the backend for grading
+        fetch('/submit-quiz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(quizData)
+        })
+            .then(response => response.text())
+            .then(message => {
+                // Alert the user with the grading results
+                alert(message);
+                window.location.reload();
+            });
+    };
+
+
 </script>
 </body>
 </html>
