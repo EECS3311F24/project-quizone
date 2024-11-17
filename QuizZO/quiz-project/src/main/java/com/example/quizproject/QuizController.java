@@ -224,6 +224,33 @@ public class QuizController {
             e.printStackTrace();
         }
     }
+    @PostMapping("/submit-quiz")
+public String submitQuiz(@RequestBody Quiz quiz) {
+    int score = 0;
+    for (Question question : quiz.getQuestions()) {
+        if (question.getSelectedAnswer() != null && 
+            question.getSelectedAnswer().equals(question.getCorrectAnswer())) {
+            score++;
+        }
+    }
+    quiz.setScore(score);
+    archiveQuizWithScore(quiz);
+    return "Quiz submitted successfully with a score of " + score;
+}
+
+private void archiveQuizWithScore(Quiz quiz) {
+    try {
+        List<Quiz> quizHistory = getQuizHistory();
+        quizHistory.add(quiz);
+        ObjectMapper mapper = new ObjectMapper();
+        try (FileWriter writer = new FileWriter(ARCHIVE_FILE_PATH)) {
+            mapper.writeValue(writer, quizHistory);
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
 }
 
 
