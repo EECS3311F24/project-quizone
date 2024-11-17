@@ -54,10 +54,11 @@
                     const quizBlock = document.createElement('div');
                     quizBlock.classList.add('quiz-block');
                     quizBlock.innerHTML = `
-                        <h2>Quiz ${index + 1}: ${quiz.title}</h2>
-                        <p><strong>Description:</strong> ${quiz.description}</p>
-                        <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
-                    `;
+                    <h2>Quiz ${index + 1}: ${quiz.title}</h2>
+                    <p><strong>Description:</strong> ${quiz.description}</p>
+                    <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
+                    <p><strong>Score Received:</strong> ${quiz.score !== undefined ? quiz.score + '%' : 'N/A'}</p>
+                `;
                     historyContainer.appendChild(quizBlock);
                 });
             })
@@ -82,35 +83,6 @@
             })
             .catch(error => console.error('Error deleting history:', error)); // Log any errors that occur during the fetch
     }
-    <!-- 
-    quiz-history.html 
-    Displays the history of quizzes, including titles, descriptions, and scores (if available).
--->
-    /**
-     * Fetches the quiz history from the backend and displays it dynamically.
-     * Includes scores for quizzes if available.
-     */
-    document.addEventListener("DOMContentLoaded", function () {
-        fetch('/get-quiz-history')
-            .then(response => response.json())
-            .then(quizzes => {
-                const historyContainer = document.getElementById('historyContainer');
-                historyContainer.innerHTML = '';
-                quizzes.forEach((quiz, index) => {
-                    const quizBlock = document.createElement('div');
-                    quizBlock.classList.add('quiz-block');
-                    quizBlock.innerHTML = `
-                        <h2>Quiz ${index + 1}: ${quiz.title}</h2>
-                        <p><strong>Description:</strong> ${quiz.description}</p>
-                        <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
-                        <p><strong>Score:</strong> ${quiz.score || 'N/A'}</p>
-                    `;
-                    historyContainer.appendChild(quizBlock);
-                });
-            });
-    });
-
-
 </script>
 </body>
 </html>
