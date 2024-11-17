@@ -127,14 +127,14 @@ public class Quiz {
 
      // The calculated score for the quiz based on the user's answers.
     @JsonProperty("score")
-    private int score;
+    private Integer score;
 
     /**
      * Retrieves the score for the quiz.
      *
      * @return the score of the quiz
      */
-    public int getScore() {
+    public Integer getScore() {
         return score;
     }
 
@@ -143,7 +143,7 @@ public class Quiz {
      *
      * @param score the calculated score to set
      */
-    public void setScore(int score) {
+    public void setScore(Integer score) {
         this.score = score;
     }
 }
