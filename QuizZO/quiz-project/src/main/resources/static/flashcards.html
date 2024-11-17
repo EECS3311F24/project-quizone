@@ -179,13 +179,20 @@
                     });
 
                     if (isQuizMode) {
-                        // Event listener for quiz submission
                         submitQuizButton.onclick = () => {
                             clearInterval(quizTimer);
                             let correctCount = 0;
+                            let totalQuestions = 0;
                             let feedbackText = '';
 
+                            let submittedQuiz = null; // Variable to hold the quiz data with score
+
                             quizzes.forEach((quiz, quizIndex) => {
+                                totalQuestions += quiz.questions.length;
+
+                                // Clone the quiz object to include the score
+                                submittedQuiz = { ...quiz, score: 0 }; // Initialize score
+
                                 quiz.questions.forEach((question, index) => {
                                     const selectedOption = document.querySelector(`input[name="question-${quizIndex}-${index}"]:checked`);
                                     if (selectedOption && selectedOption.value === question.correctAnswer) {
@@ -193,14 +200,34 @@
                                     }
                                     feedbackText += `Question ${index + 1}: ${selectedOption && selectedOption.value === question.correctAnswer ? 'Correct' : 'Incorrect'}, Correct Answer: ${question.correctAnswer}\n`;
                                 });
+
+                                // Calculate the score as a percentage
+                                submittedQuiz.score = Math.round((correctCount / totalQuestions) * 100);
                             });
 
-                            feedback.innerText = `You got ${correctCount} out of all questions correct.\n\n${feedbackText}`;
+                            feedback.innerText = `You got ${correctCount} out of ${totalQuestions} questions correct.\nYour score: ${submittedQuiz.score}%\n\n${feedbackText}`;
                             feedback.style.display = 'block';
+
+                            // Send the quiz with the score to the server
+                            fetch('/submit-quiz', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(submittedQuiz)
+                            })
+                                .then(response => response.text())
+                                .then(message => {
+                                    console.log('Server response:', message);
+                                    alert(message);
+                                })
+                                .catch(error => console.error('Error submitting quiz:', error));
                         };
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error fetching quizzes:', error);
+                }); // Close the fetch call properly
         }
 
         /**
@@ -228,40 +255,9 @@
         // Initial load of flashcards
         loadFlashcards();
     });
-
-
-    <!-- 
-    flashcards.html 
-    Allows users to take a quiz and view graded results upon submission.
--->
-
-
-    /**
-     * Handles the quiz submission process.
-     * Sends the quiz data to the backend for grading and displays the results upon completion.
-     */
-    document.getElementById('submitQuiz').onclick = function () {
-        const quizData = { /* Collect quiz data and selected answers */ };
-        
-        // Submit the quiz data to the backend for grading
-        fetch('/submit-quiz', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(quizData)
-        })
-            .then(response => response.text())
-            .then(message => {
-                // Alert the user with the grading results
-                alert(message);
-                window.location.reload();
-            });
-    };
-
-
 </script>
 </body>
 </html>
-
 
 
 
