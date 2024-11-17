@@ -19,15 +19,23 @@ public class Quiz {
 
     // A list of questions included in the quiz.
     @JsonProperty("questions")
-    private List<Question> questions; // Assuming you have a Question class for each quiz question
+    private List<Question> questions;
 
     // The time limit for completing the quiz, measured in minutes.
     @JsonProperty("timer")
-    private Integer timer; // Time limit in minutes
+    private Integer timer;
 
     // A flag indicating whether the questions should be presented in a randomized order.
     @JsonProperty("randomize")
-    private Boolean randomize; // Whether to randomize questions
+    private Boolean randomize;
+
+    // Tracks if the quiz is paused.
+    @JsonProperty("paused")
+    private boolean paused;
+
+    // Tracks the remaining time for the quiz.
+    @JsonProperty("remainingTime")
+    private Integer remainingTime;
 
     /**
      * Default constructor for the Quiz class.
@@ -35,115 +43,61 @@ public class Quiz {
      */
     public Quiz() {}
 
-    /**
-     * Gets the title of the quiz.
-     *
-     * @return The title as a string.
-     */
+    // Getters and Setters
     public String getTitle() {
         return title;
     }
 
-    /**
-     * Sets the title of the quiz.
-     *
-     * @param title The title to set.
-     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /**
-     * Gets the description of the quiz.
-     *
-     * @return The description as a string.
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * Sets the description of the quiz.
-     *
-     * @param description The description to set.
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * Gets the list of questions in the quiz.
-     *
-     * @return A list of Question objects.
-     */
     public List<Question> getQuestions() {
         return questions;
     }
 
-    /**
-     * Sets the list of questions in the quiz.
-     *
-     * @param questions The list of questions to set.
-     */
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
 
-    /**
-     * Gets the time limit for the quiz.
-     *
-     * @return The timer value in minutes.
-     */
     public Integer getTimer() {
         return timer;
     }
 
-    /**
-     * Sets the time limit for the quiz.
-     *
-     * @param timer The timer value to set in minutes.
-     */
     public void setTimer(Integer timer) {
         this.timer = timer;
     }
 
-    /**
-     * Gets whether the questions should be randomized.
-     *
-     * @return True if questions should be randomized; false otherwise.
-     */
     public Boolean getRandomize() {
         return randomize;
     }
 
-    /**
-     * Sets the flag for randomizing the order of questions.
-     *
-     * @param randomize True to randomize questions; false to keep the original order.
-     */
     public void setRandomize(Boolean randomize) {
         this.randomize = randomize;
     }
 
-     // The calculated score for the quiz based on the user's answers.
-    @JsonProperty("score")
-    private Integer score;
-
-    /**
-     * Retrieves the score for the quiz.
-     *
-     * @return the score of the quiz
-     */
-    public Integer getScore() {
-        return score;
+    public boolean isPaused() {
+        return paused;
     }
 
-    /**
-     * Sets the score for the quiz.
-     *
-     * @param score the calculated score to set
-     */
-    public void setScore(Integer score) {
-        this.score = score;
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public Integer getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(Integer remainingTime) {
+        this.remainingTime = remainingTime;
     }
 }
+
