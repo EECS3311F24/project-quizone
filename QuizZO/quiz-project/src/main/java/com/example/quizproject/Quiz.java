@@ -1,5 +1,5 @@
 package com.example.quizproject;
-
+import java.time.LocalDateTime;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -36,6 +36,9 @@ public class Quiz {
     // Tracks the remaining time for the quiz.
     @JsonProperty("remainingTime")
     private Integer remainingTime;
+
+    @JsonProperty("deadline")
+    private LocalDateTime deadline;
 
     /**
      * Default constructor for the Quiz class.
@@ -99,5 +102,12 @@ public class Quiz {
     public void setRemainingTime(Integer remainingTime) {
         this.remainingTime = remainingTime;
     }
+    public LocalDateTime getDeadline() {
+    return deadline;
+  }
+
+  public void setDeadline(LocalDateTime deadline) {
+    this.deadline = deadline;
+  }
 }
 
