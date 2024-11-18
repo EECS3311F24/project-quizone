@@ -28,12 +28,17 @@ public class QuizController {
     @GetMapping("/get-quizzes")
     public List<Quiz> getQuizzes() {
         try {
-            if (Files.exists(Paths.get(FILE_PATH))) {
-                byte[] jsonData = Files.readAllBytes(Paths.get(FILE_PATH));
-                if (jsonData.length == 0) return new ArrayList<>();
-                ObjectMapper mapper = new ObjectMapper();
-                Quiz[] quizzes = mapper.readValue(jsonData, Quiz[].class);
-                return Arrays.asList(quizzes);
+            @GetMapping("/get-quizzes")
+       public List<Quiz> getQuizzes() {
+      if (Files.exists(Paths.get(FILE_PATH))) {
+        byte[] jsonData = Files.readAllBytes(Paths.get(FILE_PATH));
+        ObjectMapper mapper = getObjectMapper();
+        Quiz[] quizzes = mapper.readValue(jsonData, Quiz[].class);
+        return Arrays.asList(quizzes);
+        }
+    return new ArrayList<>();
+   }
+
             } else {
                 return new ArrayList<>();
             }
