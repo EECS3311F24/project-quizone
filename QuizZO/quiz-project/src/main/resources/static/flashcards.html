@@ -55,6 +55,30 @@
 
         return quizTimer;
     }
+    function notifyUpcomingDeadlines() {
+    fetch('/get-quizzes')
+        .then(response => response.json())
+        .then(quizzes => {
+            const now = new Date();
+            quizzes.forEach(quiz => {
+                if (quiz.deadline) {
+                    const deadline = new Date(quiz.deadline);
+                    if (!isNaN(deadline)) {
+                        const timeDiff = deadline - now;
+                        if (timeDiff > 0 && timeDiff <= 48 * 60 * 60 * 1000) { // 48 hours
+                            alert(`Upcoming Deadline: Quiz "${quiz.title}" is due on ${deadline.toLocaleString()}`);
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error("Error fetching quizzes:", error));
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    notifyUpcomingDeadlines();
+});
+
     function pauseQuiz() {
         clearInterval(quizTimer); // Stop the timer
         const timerText = document.getElementById('timer').innerText;
@@ -124,7 +148,7 @@
         const pauseResumeButtons = document.getElementById('pauseResumeButtons');
                     
         document.getElementById('archiveButton').addEventListener('click', archiveCurrentQuiz);
-                        
+             notifyUpcomingDeadlines();             
         modeToggle.addEventListener('click', () => {
             isQuizMode = !isQuizMode;
             modeToggle.innerText = isQuizMode ? 'Switch to Flashcard Mode' : 'Switch to Quiz Mode';
