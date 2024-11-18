@@ -36,6 +36,15 @@ public class Quiz {
     // Tracks the remaining time for the quiz.
     @JsonProperty("remainingTime")
     private Integer remainingTime;
+    
+    @JsonProperty("deadline")
+   private LocalDateTime deadline;
+
+   public LocalDateTime getDeadline() {
+    return deadline;
+    }
+
+
 
     /**
      * Default constructor for the Quiz class.
@@ -99,5 +108,9 @@ public class Quiz {
     public void setRemainingTime(Integer remainingTime) {
         this.remainingTime = remainingTime;
     }
+    
+  public void setDeadline(LocalDateTime deadline) {
+    this.deadline = deadline;
+  }
 }
 
