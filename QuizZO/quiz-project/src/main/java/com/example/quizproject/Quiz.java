@@ -1,5 +1,5 @@
 package com.example.quizproject;
-
+import java.time.LocalDateTime;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -28,6 +28,9 @@ public class Quiz {
     // A flag indicating whether the questions should be presented in a randomized order.
     @JsonProperty("randomize")
     private Boolean randomize; // Whether to randomize questions
+
+    @JsonProperty("deadline")
+    private LocalDateTime deadline;
 
     /**
      * Default constructor for the Quiz class.
@@ -143,4 +146,11 @@ public class Quiz {
     public void setScore(Integer score) {
         this.score = score;
     }
+    public LocalDateTime getDeadline() {
+    return deadline;
+  }
+
+  public void setDeadline(LocalDateTime deadline) {
+    this.deadline = deadline;
+  }
 }
