@@ -75,6 +75,9 @@ public class QuizController {
     @PostMapping("/save-quiz")
     public String saveQuiz(@RequestBody Quiz quiz) {
         try {
+            if (quiz.getDeadline() != null && quiz.getDeadline().isBefore(LocalDateTime.now())) {
+                return "Failed to save the quiz: Deadline must be in the future.";
+            }
             List<Quiz> quizList = new ArrayList<>();
             quizList.add(quiz);
             saveQuizzesToFile(quizList);
