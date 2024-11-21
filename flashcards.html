@@ -1,0 +1,10 @@
+document.getElementById('toggleMode').addEventListener('click', function () {
+    const container = document.getElementById('flashcardContainer');
+    if (container.classList.contains('quiz-mode')) {
+        container.classList.remove('quiz-mode');
+        this.textContent = 'Switch to Quiz Mode';
+    } else {
+        container.classList.add('quiz-mode');
+        this.textContent = 'Switch to Flashcard Mode';
+    }
+});
