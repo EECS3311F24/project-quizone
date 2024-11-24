@@ -1,11 +1,12 @@
 package com.example.quizproject;
-import java.time.LocalDateTime;
+
 import java.util.List;
+import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Quiz class represents a quiz, containing a title, description, a list of questions,
- * a timer for time limits, and a flag for randomizing question order.
+ * a timer for time limits, a flag for randomizing question order, and a deadline.
  */
 public class Quiz {
 
@@ -29,8 +30,9 @@ public class Quiz {
     @JsonProperty("randomize")
     private Boolean randomize; // Whether to randomize questions
 
+    // The deadline for the quiz.
     @JsonProperty("deadline")
-    private LocalDateTime deadline;
+    private LocalDateTime deadline; // Deadline for quiz completion
 
     /**
      * Default constructor for the Quiz class.
@@ -128,29 +130,21 @@ public class Quiz {
         this.randomize = randomize;
     }
 
-    private Integer score;
     /**
-     * Gets the score received on the quiz.
+     * Gets the deadline for the quiz.
      *
-     * @return The score as an Integer.
+     * @return The deadline as a LocalDateTime object.
      */
-    public Integer getScore() {
-        return score;
-    }
-
-    /**
-     * Sets the score received on the quiz.
-     *
-     * @param score The score to set.
-     */
-    public void setScore(Integer score) {
-        this.score = score;
-    }
     public LocalDateTime getDeadline() {
-    return deadline;
-  }
+        return deadline;
+    }
 
-  public void setDeadline(LocalDateTime deadline) {
-    this.deadline = deadline;
-  }
+    /**
+     * Sets the deadline for the quiz.
+     *
+     * @param deadline The deadline to set.
+     */
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
 }
