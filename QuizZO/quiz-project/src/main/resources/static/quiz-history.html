@@ -21,69 +21,60 @@
 </div>
 
 <script>
-    // Load quiz history when the document is fully loaded
     document.addEventListener("DOMContentLoaded", function() {
         loadQuizHistory();
     });
 
-    /**
-     * Fetches and displays the quiz history from the server.
-     * Populates the historyContainer with the list of quizzes.
-     */
     function loadQuizHistory() {
         fetch('/get-quiz-history')
             .then(response => {
-                console.log('Received response from server:', response);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch quiz history.');
+                    throw new Error("Failed to fetch quiz history.");
                 }
-                return response.json(); // Parse the response as JSON
+                return response.json();
             })
             .then(quizzes => {
-                console.log('Retrieved quizzes:', quizzes);
-                const historyContainer = document.getElementById('historyContainer');
+                const historyContainer = document.getElementById("historyContainer");
+                historyContainer.innerHTML = ""; // Clear previous history
 
-                // Display a message if no quizzes are found
                 if (quizzes.length === 0) {
                     historyContainer.innerHTML = "<p>No quizzes found in history.</p>";
                     return;
                 }
 
-                // Loop through each quiz and create a block to display its details
                 quizzes.forEach((quiz, index) => {
-                    const quizBlock = document.createElement('div');
-                    quizBlock.classList.add('quiz-block');
+                    const quizBlock = document.createElement("div");
+                    quizBlock.classList.add("quiz-block");
                     quizBlock.innerHTML = `
-                    <h2>Quiz ${index + 1}: ${quiz.title}</h2>
-                    <p><strong>Description:</strong> ${quiz.description}</p>
-                    <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
-                    <p><strong>Score Received:</strong> ${quiz.score !== undefined ? quiz.score + '%' : 'N/A'}</p>
-                `;
+                        <h2>Quiz ${index + 1}: ${quiz.title}</h2>
+                        <p><strong>Description:</strong> ${quiz.description}</p>
+                        <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
+                        ${
+                        quiz.description.includes("Score Received")
+                            ? `<p><strong>Score:</strong> ${
+                                quiz.description.match(/Score Received: (\d+)%/)[1]
+                            }%</p>`
+                            : ""
+                    }
+                    `;
                     historyContainer.appendChild(quizBlock);
                 });
             })
-            .catch(error => console.error('Error fetching quiz history:', error)); // Log any errors that occur
+            .catch(error => console.error("Error fetching quiz history:", error));
     }
 
-    /**
-     * Sends a request to the server to delete the quiz history.
-     * If successful, displays a success message and reloads the page.
-     */
     function deleteHistory() {
-        fetch('/delete-quiz-history', {
-            method: 'DELETE'
-        })
+        fetch("/delete-quiz-history", { method: "DELETE" })
             .then(response => {
                 if (response.ok) {
                     alert("Quiz history deleted successfully!");
-                    location.reload(); // Reload the page to refresh the displayed history
+                    location.reload();
                 } else {
                     alert("Failed to delete quiz history.");
                 }
             })
-            .catch(error => console.error('Error deleting history:', error)); // Log any errors that occur during the fetch
+            .catch(error => console.error("Error deleting history:", error));
     }
 </script>
 </body>
 </html>
-
