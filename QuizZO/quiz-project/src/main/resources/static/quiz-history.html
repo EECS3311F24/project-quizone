@@ -57,6 +57,25 @@
                             : ""
                     }
                     `;
+                    //---------------------------------------------ticket 1.2 SP3
+                    const scoreMatch = quiz.description.match(/Score Received: (\d+)%/);
+                    const score = scoreMatch ? parseInt(scoreMatch[1], 10) : null;
+
+                    if (score && score >= 80) { // Threshold for certificate eligibility
+                        const certificateButton = document.createElement("button");
+                        certificateButton.innerText = "View Certificate";
+                        certificateButton.onclick = () => {
+                            localStorage.setItem("certificateData", JSON.stringify({
+                                title: quiz.title,
+                                score: score,
+                                date: new Date().toLocaleDateString()
+                            }));
+                            window.location.href = "certificate-template.html";
+                        };
+                        quizBlock.appendChild(certificateButton);
+                    }
+                    //------------------------------------------------ ticket 1.2 SP3
+
                     historyContainer.appendChild(quizBlock);
                 });
             })
