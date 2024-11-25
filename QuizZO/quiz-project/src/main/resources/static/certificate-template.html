@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Completion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f9f9f9;
+        }
+        .certificate-container {
+            width: 80%;
+            max-width: 800px;
+            padding: 20px;
+            text-align: center;
+            border: 5px solid #4caf50;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #4caf50;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .signature {
+            margin-top: 30px;
+            font-style: italic;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="certificate-container">
+    <h1>Certificate of Completion</h1>
+    <p>This certifies that</p>
+    <h2><strong>**[Name Placeholder]**</strong></h2>
+    <p>has successfully completed the</p>
+    <h2><strong>**[Quiz Title Placeholder]**</strong></h2>
+    <p>with a score of</p>
+    <h2><strong>**[Score Placeholder]%**</strong></h2>
+    <p>on</p>
+    <h2><strong>**[Date Placeholder]**</strong></h2>
+    <div class="signature">
+        <p>Signed,</p>
+        <p>Quiz Project Team</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Prompt the user for their name
+        const userName = prompt("Enter your name for the certificate:");
+
+        // Update the certificate placeholders
+        document.getElementById("userName").innerText = userName || "Anonymous";
+
+        // Dynamic values for placeholders (example; replace with actual values in integration)
+        document.getElementById("quizTitle").innerText = "Sample Quiz";
+        document.getElementById("quizScore").innerText = "95";
+        document.getElementById("completionDate").innerText = new Date().toLocaleDateString();
+    });
+</script>
+</body>
+</html>
