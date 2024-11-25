@@ -48,31 +48,36 @@
 <div class="certificate-container">
     <h1>Certificate of Completion</h1>
     <p>This certifies that</p>
-    <h2><strong>**[Name Placeholder]**</strong></h2>
+    <h2><strong id="userName">[Name Placeholder]</strong></h2>
     <p>has successfully completed the</p>
-    <h2><strong>**[Quiz Title Placeholder]**</strong></h2>
+    <h2><strong id="quizTitle">[Quiz Title Placeholder]</strong></h2>
     <p>with a score of</p>
-    <h2><strong>**[Score Placeholder]%**</strong></h2>
+    <h2><strong id="quizScore">[Score Placeholder]%</strong></h2>
     <p>on</p>
-    <h2><strong>**[Date Placeholder]**</strong></h2>
+    <h2><strong id="completionDate">[Date Placeholder]</strong></h2>
     <div class="signature">
         <p>Signed,</p>
-        <p>Quiz Project Team</p>
+        <p>QuiZone Project Team</p>
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // Prompt the user for their name
-        const userName = prompt("Enter your name for the certificate:");
+        // Retrieve certificate data from localStorage
+        const certificateData = JSON.parse(localStorage.getItem("certificateData"));
 
-        // Update the certificate placeholders
-        document.getElementById("userName").innerText = userName || "Anonymous";
+        if (certificateData) {
+            // Populate placeholders with actual data
+            document.getElementById("quizTitle").innerText = certificateData.title;
+            document.getElementById("quizScore").innerText = certificateData.score;
+            document.getElementById("completionDate").innerText = certificateData.date;
 
-        // Dynamic values for placeholders (example; replace with actual values in integration)
-        document.getElementById("quizTitle").innerText = "Sample Quiz";
-        document.getElementById("quizScore").innerText = "95";
-        document.getElementById("completionDate").innerText = new Date().toLocaleDateString();
+            // Prompt the user for their name
+            const userName = prompt("Enter your name for the certificate:");
+            document.getElementById("userName").innerText = userName || "Anonymous";
+        } else {
+            alert("No certificate data found. Please go back to Quiz History and try again.");
+        }
     });
 </script>
 </body>
