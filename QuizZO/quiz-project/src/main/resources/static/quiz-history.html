@@ -65,11 +65,13 @@
                         const certificateButton = document.createElement("button");
                         certificateButton.innerText = "View Certificate";
                         certificateButton.onclick = () => {
-                            localStorage.setItem("certificateData", JSON.stringify({
+                            const dataToStore = {
                                 title: quiz.title,
                                 score: score,
                                 date: new Date().toLocaleDateString()
-                            }));
+                            };
+                            console.log("Storing certificate data:", dataToStore); // Debugging line
+                            localStorage.setItem("certificateData", JSON.stringify(dataToStore));
                             window.location.href = "certificate-template.html";
                         };
                         quizBlock.appendChild(certificateButton);
