@@ -1,11 +1,12 @@
 package com.example.quizproject;
 
 import java.util.List;
+import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The Quiz class represents a quiz, containing a title, description, a list of questions,
- * a timer for time limits, and a flag for randomizing question order.
+ * a timer for time limits, a flag for randomizing question order, and a deadline.
  */
 public class Quiz {
 
@@ -29,6 +30,13 @@ public class Quiz {
     @JsonProperty("randomize")
     private Boolean randomize; // Whether to randomize questions
 
+    // The deadline for the quiz.
+    @JsonProperty("deadline")
+    private LocalDateTime deadline; // Deadline for quiz completion
+
+    //  Difficulty Field Ticket 2 Task 1 SP3
+    @JsonProperty("difficulty")
+    private String difficulty;
     /**
      * Default constructor for the Quiz class.
      * Useful for deserialization and general instantiation.
@@ -125,22 +133,31 @@ public class Quiz {
         this.randomize = randomize;
     }
 
-    private Integer score;
     /**
-     * Gets the score received on the quiz.
+     * Gets the deadline for the quiz.
      *
-     * @return The score as an Integer.
+     * @return The deadline as a LocalDateTime object.
      */
-    public Integer getScore() {
-        return score;
+    public LocalDateTime getDeadline() {
+        return deadline;
     }
 
     /**
-     * Sets the score received on the quiz.
+     * Sets the deadline for the quiz.
      *
-     * @param score The score to set.
+     * @param deadline The deadline to set.
      */
-    public void setScore(Integer score) {
-        this.score = score;
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
+    }
+
+
+    // **Getters and Setters for Difficulty** Ticket 2 Task 1 SP3
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
     }
 }
