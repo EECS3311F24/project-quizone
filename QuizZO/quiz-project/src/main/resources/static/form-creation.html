@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create a Quiz</title>
     <link rel="stylesheet" href="styles.css">
+
 </head>
 <body>
 <h1>Create a New Quiz</h1>
@@ -21,6 +22,18 @@
     <label for="randomize-questions">Randomize Questions:</label>
     <input type="checkbox" id="randomize-questions" name="randomize-questions">
 
+    <!-- Deadline Field -->
+    <label for="deadline">Quiz Deadline:</label>
+    <input type="datetime-local" id="deadline" name="deadline" required>
+
+    <!-- Add Difficulty Levels Ticket 2 Task 1 SP3-->
+    <label for="difficulty">Difficulty Level:</label>
+    <select id="difficulty" name="difficulty" required>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+    </select>
+
     <div id="questionsContainer"></div>
     <button type="button" onclick="addQuestion()">Add Question</button>
     <button type="submit">Create Quiz</button>
@@ -33,13 +46,8 @@
 </div>
 
 <script>
-    // Counter to keep track of the number of questions added
     let questionCount = 0;
 
-    /**
-     * Adds a new question block to the quiz form.
-     * Each question block includes fields for question text, options, and the correct answer.
-     */
     function addQuestion() {
         questionCount++;
         const questionHTML = `
@@ -48,63 +56,53 @@
                 <input type="text" id="questionText-${questionCount}" name="questions[${questionCount}][text]" required>
                 <label for="options-${questionCount}">Options (comma-separated):</label>
                 <input type="text" id="options-${questionCount}" name="questions[${questionCount}][options]" required>
-                <label for="answer-${questionCount}">Correct Answer:</label>
+              <label for="answer-${questionCount}">Correct Answer:</label>
                 <input type="text" id="answer-${questionCount}" name="questions[${questionCount}][correctAnswer]" required>
             </div>
         `;
-        // Insert the new question block into the container
         document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', questionHTML);
     }
 
-    // Attach a submit event listener to the quiz form
     document.getElementById("quizForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
-
-        // Collect quiz data from the form fields
+        event.preventDefault();
+    
         const quiz = {
             title: document.getElementById("title").value,
             description: document.getElementById("description").value,
-            timer: document.getElementById("quiz-timer").value || null, // Set timer, null if not provided
+            timer: document.getElementById("quiz-timer").value || null,
             randomize: document.getElementById("randomize-questions").checked,
+            deadline: document.getElementById("deadline").value || null,
             questions: []
         };
 
-        // Collect each question's details
         for (let i = 1; i <= questionCount; i++) {
             const questionText = document.getElementById(`questionText-${i}`).value;
             const options = document.getElementById(`options-${i}`).value.split(",");
             const answer = document.getElementById(`answer-${i}`).value;
-
+        
             quiz.questions.push({
                 text: questionText,
-                options: options.map(option => option.trim()), // Trim whitespace from each option
-                correctAnswer: answer.trim() // Trim whitespace from the correct answer
+                options: options.map(option => option.trim()),
+                correctAnswer: answer.trim()
             });
-        }
-
-        // Send the quiz data to the server using a POST request
+      }
+                
         fetch('/save-quiz', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(quiz)
         })
             .then(response => {
                 if (response.ok) {
                     alert("Quiz saved successfully!");
-                    window.location.href = 'flashcards.html'; // Redirect to flashcards page after saving
+                    window.location.href = 'flashcards.html';
                 } else {
                     alert("Failed to save the quiz.");
                 }
             })
-            .catch(error => console.error("Error:", error)); // Log any errors that occur during the fetch
+            .catch(error => console.error("Error:", error));
     });
-</script>
+</script> 
 </body>
 </html>
-
-
-
-
-
+            
