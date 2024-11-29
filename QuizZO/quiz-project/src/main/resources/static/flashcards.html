@@ -56,11 +56,11 @@
                         if (!isNaN(deadline) && deadline - now > 0 && deadline - now <= 48 * 60 * 60 * 1000) {
                             alert(`Upcoming Deadline: Quiz "${quiz.title}" is due on ${deadline.toLocaleString()}`);
                         }
-                    });
+                 });
                 })
                 .catch(error => console.error("Error fetching quizzes for deadlines:", error));
         }
-
+    
         /**
          * Check if the deadline has passed and prevent submissions if so.
          * @param {Object} quiz - The quiz object to check.
@@ -77,24 +77,27 @@
 
         function loadFlashcards() {
             flashcardContainer.innerHTML = ''; // Clear the container
-
-            fetch('/get-quizzes')
+                
+            fetch('/get-quizzes') 
                 .then(response => {
                     if (!response.ok) throw new Error('Failed to fetch quizzes');
                     return response.json();
                 })
                 .then(quizzes => {
                     if (quizzes.length === 0) {
-                        flashcardContainer.innerHTML = '<p>No quizzes found.</p>';
+                       flashcardContainer.innerHTML = '<p>No quizzes found.</p>';
                         return;
                     }
-
+         
                     quizzes.forEach((quiz, quizIndex) => {
                         const quizBlock = document.createElement('div');
                         quizBlock.classList.add('quiz-block');
+         
+                        // Add difficulty level to Flashcards
                         quizBlock.innerHTML = `
                             <h3>Quiz ${quizIndex + 1}: ${quiz.title}</h3>
                             <p><strong>Description:</strong> ${quiz.description}</p>
+                            <p><strong>Difficulty Level:</strong> ${quiz.difficulty || "Not Specified"}</p> <!-- NEW Ticket 2 Task 2.3 SP3 -->
                             <p><strong>Timer:</strong> ${quiz.timer} minutes</p>
                             <p><strong>Deadline:</strong> ${
                             quiz.deadline ? new Date(quiz.deadline).toLocaleString() : 'No deadline'
@@ -104,18 +107,18 @@
                         quiz.questions.forEach((question, questionIndex) => {
                             const flashcard = document.createElement('div');
                             flashcard.classList.add('flashcard', isQuizMode ? 'quiz-mode' : 'flashcard-mode');
-
+            
                             // Question text
-                            const questionText = document.createElement('div');
+                            const questionText = document.createElement('div');  
                             questionText.classList.add('question');
                             questionText.innerText = `Question ${questionIndex + 1}: ${question.text}`;
-
+                
                             // Flag button for flashcards
-                            const flagButton = document.createElement('button');
+                           const flagButton = document.createElement('button');  
                             flagButton.classList.add('flag-button');
                             flagButton.innerText = flaggedQuestions.has(questionIndex) ? 'Unflag Question' : 'Flag Question';
                             flagButton.onclick = () => toggleFlag(questionIndex, flagButton, flashcard);
-
+                    
                             if (isQuizMode) {
                                 // Quiz mode: display answer options
                                 const optionsContainer = document.createElement('div');
@@ -123,85 +126,84 @@
                                 question.options.forEach(option => {
                                     const optionLabel = document.createElement('label');
                                     optionLabel.classList.add('option-label');
-
+                            
                                     const optionInput = document.createElement('input');
                                     optionInput.type = 'radio';
                                     optionInput.name = `question-${quizIndex}-${questionIndex}`;
                                     optionInput.value = option;
-
+                          
                                     optionLabel.appendChild(optionInput);
                                     optionLabel.append(option);
                                     optionsContainer.appendChild(optionLabel);
                                 });
-
+            
                                 flashcard.appendChild(questionText);
                                 flashcard.appendChild(optionsContainer);
                             } else {
                                 // Flashcard mode: display the correct answer when clicked
                                 const answerText = document.createElement('div');
-                                answerText.classList.add('answer');
-                                answerText.innerText = `Answer: ${question.correctAnswer}`;
-                                answerText.style.display = 'none';
-
+                                answerText.classList.add('answer');                               answerText.innerText = `Answer: ${question.correctAnswer}`;
+                                answerText.style.display = 'none';  
+                            
                                 flashcard.onclick = () => {
                                     answerText.style.display = answerText.style.display === 'none' ? 'block' : 'none';
                                 };
-
+                                
                                 flashcard.appendChild(questionText);
                                 flashcard.appendChild(answerText);
                             }
-
+                                    
                             flashcard.appendChild(flagButton);
                             quizBlock.appendChild(flashcard);
                         });
-
+                                    
                         flashcardContainer.appendChild(quizBlock);
                     });
-                })
+                })        
                 .catch(error => {
                     console.error(error);
                     flashcardContainer.innerHTML = '<p>Error loading quizzes. Please try again later.</p>';
                 });
-        }
-
+        }   
+                                
         function toggleMode() {
             isQuizMode = !isQuizMode;
             modeToggle.innerText = isQuizMode ? 'Switch to Flashcard Mode' : 'Switch to Quiz Mode';
             submitQuizButton.style.display = isQuizMode ? 'block' : 'none';
             timerDisplay.style.display = isQuizMode ? 'block' : 'none';
-
+                             
             if (isQuizMode) {
                 startTimer(5); // Example timer for 5 minutes
             } else {
                 clearInterval(quizTimer);
             }
-
+                                
             loadFlashcards(); // Reload flashcards or quiz questions
         }
         pauseResumeButton.addEventListener("click", () => {
-            if (!quizTimer) {
+            if (!quizTimer) {       
                 alert("Timer is not active yet! Switch to Quiz Mode to start the timer.");
                 return;
             }
-
+                                    
             if (isPaused) {
                 // Resume the timer
                 isPaused = false;
                 pauseResumeButton.innerText = "Pause";
-
+                    
                 // Resume the timer with the remaining time
                 startTimer(Math.ceil(remainingTime / 60)); // Resume timer with remaining time in minutes
             } else {
                 // Pause the timer
                 isPaused = true;
                 pauseResumeButton.innerText = "Resume";
-
+            
                 // Stop the timer and store the remaining time
                 clearInterval(quizTimer);
-            }
+          }                   
         });
-
-
+                
+            
     //---------------------------------------------------
        /*
         function startTimer(minutes) {
@@ -219,21 +221,21 @@
                 }
             }, 1000);
         }
-
+                
         */
     //------------------------------------------------
     function startTimer(minutes) {
-        let timeLeft = remainingTime || minutes * 60;
+        let timeLeft = remainingTime || minutes * 60;  
         remainingTime = timeLeft;
         quizTimer = setInterval(() => {
             if (!isPaused) {
-                const min = Math.floor(timeLeft / 60);
+               const min = Math.floor(timeLeft / 60);
                 const sec = timeLeft % 60;
                 document.getElementById("timer").innerText = `Time Remaining: ${min}:${sec < 10 ? "0" : ""}${sec}`;
                 timeLeft--;
                 remainingTime = timeLeft;
-
-                if (timeLeft < 0) {
+         
+                if (timeLeft < 0) {   
                     clearInterval(quizTimer);
                     document.getElementById("timer").innerText = "Time's up!";
                     alert("Time's up! Please submit your answers.");
@@ -242,7 +244,7 @@
             }
         }, 1000);
     }
-
+                    
         function toggleFlag(index, button, flashcardElement) {
             if (flaggedQuestions.has(index)) {
                 flaggedQuestions.delete(index);
@@ -252,23 +254,23 @@
             } else {
                 flaggedQuestions.add(index);
                 flashcardElement.style.backgroundColor = '#ffcccb';
-                button.innerText = 'Unflag Question';
+                button.innerText = 'Unflag Question';  
                 alert(`Question ${index + 1} flagged.`);
             }
         }
-
+              
         submitQuizButton.addEventListener("click", () => {
             fetch('/get-quizzes')
                 .then(response => response.json())
                 .then(quizzes => {
                     const activeQuiz = quizzes[0]; // Assuming one active quiz
                     if (!checkDeadline(activeQuiz)) return; // Check deadline
-
+                    
                     const submittedAnswers = [];
                     document.querySelectorAll('.quiz-mode input[type="radio"]:checked').forEach(input => {
                         submittedAnswers.push(input.value);
                     });
-
+             
                     fetch('/submit-quiz', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -277,7 +279,7 @@
                         .then(response => response.text())
                         .then(result => {
                             feedback.style.display = 'block';
-                            feedback.innerText = result;
+                            feedback.innerText = result;  
                             alert('Quiz submitted and archived successfully!');
                         })
                         .catch(error => {
@@ -285,8 +287,8 @@
                             alert('Failed to submit the quiz. Please try again.');
                         });
                 });
-        });
-
+      });     
+        
         archiveButton.addEventListener("click", () => {
             fetch('/archive-and-clear-quiz', { method: 'POST' })
                 .then(response => response.ok ? response.text() : Promise.reject(response.text()))
@@ -299,13 +301,15 @@
                     alert(`Error: ${error}`);
                 });
         });
-
+                        
         modeToggle.addEventListener("click", toggleMode);
-
-
+                        
+                      
         notifyUpcomingDeadlines(); // Notify deadlines on page load
         loadFlashcards(); // Load flashcards on page load
     });
 </script>
 </body>
 </html>
+                        
+          
