@@ -34,6 +34,9 @@ public class Quiz {
     @JsonProperty("deadline")
     private LocalDateTime deadline; // Deadline for quiz completion
 
+    //  Difficulty Field Ticket 2 Task 1 SP3
+    @JsonProperty("difficulty")
+    private String difficulty;
     /**
      * Default constructor for the Quiz class.
      * Useful for deserialization and general instantiation.
@@ -146,5 +149,15 @@ public class Quiz {
      */
     public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;
+    }
+
+
+    // **Getters and Setters for Difficulty** Ticket 2 Task 1 SP3
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
     }
 }
