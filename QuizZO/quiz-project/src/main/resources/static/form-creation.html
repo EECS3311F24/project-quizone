@@ -56,7 +56,7 @@
                 <input type="text" id="questionText-${questionCount}" name="questions[${questionCount}][text]" required>
                 <label for="options-${questionCount}">Options (comma-separated):</label>
                 <input type="text" id="options-${questionCount}" name="questions[${questionCount}][options]" required>
-              <label for="answer-${questionCount}">Correct Answer:</label>
+                             <label for="answer-${questionCount}">Correct Answer:</label>
                 <input type="text" id="answer-${questionCount}" name="questions[${questionCount}][correctAnswer]" required>
             </div>
         `;
@@ -72,21 +72,22 @@
             timer: document.getElementById("quiz-timer").value || null,
             randomize: document.getElementById("randomize-questions").checked,
             deadline: document.getElementById("deadline").value || null,
+            difficulty: document.getElementById("difficulty").value || "Not Specified", // Add difficulty level
             questions: []
         };
-
+    
         for (let i = 1; i <= questionCount; i++) {
             const questionText = document.getElementById(`questionText-${i}`).value;
             const options = document.getElementById(`options-${i}`).value.split(",");
             const answer = document.getElementById(`answer-${i}`).value;
-        
+            
             quiz.questions.push({
                 text: questionText,
                 options: options.map(option => option.trim()),
                 correctAnswer: answer.trim()
-            });
-      }
-                
+          });
+        }
+            
         fetch('/save-quiz', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -105,4 +106,4 @@
 </script> 
 </body>
 </html>
-            
+       
