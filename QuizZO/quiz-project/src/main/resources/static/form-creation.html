@@ -22,9 +22,17 @@
     <label for="randomize-questions">Randomize Questions:</label>
     <input type="checkbox" id="randomize-questions" name="randomize-questions">
 
-    <!-- New Deadline Field -->
+    <!-- Deadline Field -->
     <label for="deadline">Quiz Deadline:</label>
     <input type="datetime-local" id="deadline" name="deadline" required>
+
+    <!-- Add Difficulty Levels Ticket 2 Task 1 SP3-->
+    <label for="difficulty">Difficulty Level:</label>
+    <select id="difficulty" name="difficulty" required>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+    </select>
 
     <div id="questionsContainer"></div>
     <button type="button" onclick="addQuestion()">Add Question</button>
@@ -48,7 +56,7 @@
                 <input type="text" id="questionText-${questionCount}" name="questions[${questionCount}][text]" required>
                 <label for="options-${questionCount}">Options (comma-separated):</label>
                 <input type="text" id="options-${questionCount}" name="questions[${questionCount}][options]" required>
-                <label for="answer-${questionCount}">Correct Answer:</label>
+              <label for="answer-${questionCount}">Correct Answer:</label>
                 <input type="text" id="answer-${questionCount}" name="questions[${questionCount}][correctAnswer]" required>
             </div>
         `;
@@ -57,7 +65,7 @@
 
     document.getElementById("quizForm").addEventListener("submit", function(event) {
         event.preventDefault();
-
+    
         const quiz = {
             title: document.getElementById("title").value,
             description: document.getElementById("description").value,
@@ -71,14 +79,14 @@
             const questionText = document.getElementById(`questionText-${i}`).value;
             const options = document.getElementById(`options-${i}`).value.split(",");
             const answer = document.getElementById(`answer-${i}`).value;
-
+        
             quiz.questions.push({
                 text: questionText,
                 options: options.map(option => option.trim()),
                 correctAnswer: answer.trim()
             });
-        }
-
+      }
+                
         fetch('/save-quiz', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -94,6 +102,7 @@
             })
             .catch(error => console.error("Error:", error));
     });
-</script>
+</script> 
 </body>
 </html>
+            
