@@ -50,6 +50,10 @@ public class QuizController {
     @PostMapping("/save-quiz")
     public String saveQuiz(@RequestBody Quiz quiz) {
         try {
+            // Ensure difficulty is not null Ticket 2 Task 2 SP3
+            if (quiz.getDifficulty() == null || quiz.getDifficulty().isEmpty()) {
+                quiz.setDifficulty("Not Specified"); // Default value for difficulty
+            }
             if (quiz.getDeadline() != null && quiz.getDeadline().isBefore(LocalDateTime.now())) {
                 return "Failed to save the quiz: Deadline must be in the future.";
             }

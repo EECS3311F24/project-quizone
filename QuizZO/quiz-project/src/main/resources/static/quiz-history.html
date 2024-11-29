@@ -49,18 +49,22 @@
                         <h2>Quiz ${index + 1}: ${quiz.title}</h2>
                         <p><strong>Description:</strong> ${quiz.description}</p>
                         <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
+                        <!-- Added Difficulty Ticket 2 Task 2.2 SP3-->
+                        <p><strong>Difficulty Level:</strong> ${quiz.difficulty || "Not Specified"}</p>
+
                         ${
                         quiz.description.includes("Score Received")
                             ? `<p><strong>Score:</strong> ${
                                 quiz.description.match(/Score Received: (\d+)%/)[1]
-                            }%</p>`
-                            : ""
+
+                         }%</p>`
+                            : ""   
                     }
                     `;
                     //---------------------------------------------ticket 1.2 SP3
                     const scoreMatch = quiz.description.match(/Score Received: (\d+)%/);
                     const score = scoreMatch ? parseInt(scoreMatch[1], 10) : null;
-
+                
                     if (score && score >= 80) { // Threshold for certificate eligibility
                         const certificateButton = document.createElement("button");
                         certificateButton.innerText = "View Certificate";
@@ -81,9 +85,9 @@
                     historyContainer.appendChild(quizBlock);
                 });
             })
-            .catch(error => console.error("Error fetching quiz history:", error));
-    }
-
+            .catch(error => console.error("Error fetching quiz history:", error)); 
+  }
+                            
     function deleteHistory() {
         fetch("/delete-quiz-history", { method: "DELETE" })
             .then(response => {
@@ -99,3 +103,5 @@
 </script>
 </body>
 </html>
+                            
+             
