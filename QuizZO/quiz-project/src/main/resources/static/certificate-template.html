@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Completion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f9f9f9;
+        }
+        .certificate-container {
+            width: 80%;
+            max-width: 800px;
+            padding: 20px;
+            text-align: center;
+            border: 5px solid #4caf50;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #4caf50;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .signature {
+            margin-top: 30px;
+            font-style: italic;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="certificate-container">
+    <h1>Certificate of Completion</h1>
+    <p>This certifies that</p>
+    <h2><strong id="userName">[Name Placeholder]</strong></h2>
+    <p>has successfully completed the</p>
+    <h2><strong id="quizTitle">[Quiz Title Placeholder]</strong></h2>
+    <p>with a score of</p>
+    <h2><strong id="quizScore">[Score Placeholder]%</strong></h2>
+    <p>on</p>
+    <h2><strong id="completionDate">[Date Placeholder]</strong></h2>
+    <div class="signature">
+        <p>Signed,</p>
+        <p>QuiZone Project Team</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Retrieve certificate data from localStorage
+        const certificateData = JSON.parse(localStorage.getItem("certificateData"));
+
+        if (certificateData) {
+            // Populate placeholders with actual data
+            document.getElementById("quizTitle").innerText = certificateData.title;
+            document.getElementById("quizScore").innerText = certificateData.score;
+            document.getElementById("completionDate").innerText = certificateData.date;
+
+            // Prompt the user for their name
+            const userName = prompt("Enter your name for the certificate:");
+            document.getElementById("userName").innerText = userName || "Anonymous";
+        } else {
+            alert("No certificate data found. Please go back to Quiz History and try again.");
+        }
+    });
+</script>
+</body>
+</html>
