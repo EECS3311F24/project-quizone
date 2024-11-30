@@ -10,12 +10,10 @@
 <button id="modeToggle">Switch to Quiz Mode</button>
 <div id="timer" style="display: none; text-align: center; font-size: 20px; margin-bottom: 20px;"></div>
 
-<!-- START: Favorites Section for Tasks 3.3 and 3.4 -->
+<!-- START: New Favorites Section for Task 3.3 and 3.4 -->
 <h2>Your Favorite Quizzes</h2>
-<div id="favoritesContainer">
-    <p>Loading your favorite quizzes...</p>
-</div>
-<!-- END: Favorites Section -->
+<div id="favoritesContainer"></div>
+<!-- END: New Favorites Section -->
 
 <div id="flashcardContainer"></div>
 <button id="submitQuiz" style="display: none;">Submit Quiz</button>
@@ -23,6 +21,7 @@
 
 <!-- Navigation buttons -->
 <div class="navigation-buttons">
+    <!-- Add Pause/Resume Button -->
     <button id="pauseResumeButton">Pause</button>
     <button onclick="window.location.href='form-creation.html'">Create a New Quiz</button>
     <button onclick="window.location.href='quiz-history.html'">Go to Quiz History</button>
@@ -45,9 +44,13 @@
         const archiveButton = document.getElementById("archiveButton");
         const pauseResumeButton = document.getElementById("pauseResumeButton");
 
-        // Load Favorites for Tasks 3.3 and 3.4
+        // START: Load Favorites for Tasks 3.3 and 3.4
         loadFavorites();
+        // END: Load Favorites
 
+        /**
+         * Notify users about upcoming quiz deadlines.
+         */
         function notifyUpcomingDeadlines() {
             fetch('/get-quizzes')
                 .then(response => response.json())
@@ -63,6 +66,10 @@
                 .catch(error => console.error("Error fetching quizzes for deadlines:", error));
         }
 
+        /**
+         * Check if the deadline has passed and prevent submissions if so.
+         * @param {Object} quiz - The quiz object to check.
+         */
         function checkDeadline(quiz) {
             const now = new Date();
             const deadline = new Date(quiz.deadline);
@@ -71,49 +78,6 @@
                 return false;
             }
             return true;
-        }
-
-        // Favorites Section Functions
-        function loadFavorites() {
-            const favoritesContainer = document.getElementById("favoritesContainer");
-            const bookmarks = getBookmarks();
-
-            if (bookmarks.length === 0) {
-                favoritesContainer.innerHTML = "<p>You have no favorite quizzes.</p>";
-                return;
-            }
-
-            favoritesContainer.innerHTML = ""; // Clear the loading message
-            bookmarks.forEach(quizTitle => {
-                const quizItem = document.createElement("div");
-                quizItem.classList.add("favorite-quiz");
-                quizItem.innerHTML = `
-                    <p>${quizTitle}</p>
-                    <button onclick="goToQuiz('${quizTitle}')">View Quiz</button>
-                    <button onclick="removeFromFavorites('${quizTitle}')">Remove</button>
-                `;
-                favoritesContainer.appendChild(quizItem);
-            });
-        }
-
-        function getBookmarks() {
-            const bookmarks = localStorage.getItem("bookmarkedQuizzes");
-            return bookmarks ? JSON.parse(bookmarks) : [];
-        }
-
-        function saveBookmarks(bookmarks) {
-            localStorage.setItem("bookmarkedQuizzes", JSON.stringify(bookmarks));
-        }
-
-        function goToQuiz(quizTitle) {
-            alert(`Navigating to quiz: ${quizTitle}`);
-        }
-
-        function removeFromFavorites(quizTitle) {
-            let bookmarks = getBookmarks();
-            bookmarks = bookmarks.filter(bookmark => bookmark !== quizTitle);
-            saveBookmarks(bookmarks);
-            loadFavorites(); // Refresh the favorites list
         }
 
         function loadFlashcards() {
@@ -134,6 +98,7 @@
                         const quizBlock = document.createElement('div');
                         quizBlock.classList.add('quiz-block');
 
+                        // Add difficulty level to Flashcards
                         quizBlock.innerHTML = `
                             <h3>Quiz ${quizIndex + 1}: ${quiz.title}</h3>
                             <p><strong>Description:</strong> ${quiz.description}</p>
@@ -144,6 +109,60 @@
                         }</p>
                         `;
 
+                        quiz.questions.forEach((question, questionIndex) => {
+                            const flashcard = document.createElement('div');
+                            flashcard.classList.add('flashcard', isQuizMode ? 'quiz-mode' : 'flashcard-mode');
+
+                            // Question text
+                            const questionText = document.createElement('div');
+                            questionText.classList.add('question');
+                            questionText.innerText = `Question ${questionIndex + 1}: ${question.text}`;
+
+                            // Flag button for flashcards
+                            const flagButton = document.createElement('button');
+                            flagButton.classList.add('flag-button');
+                            flagButton.innerText = flaggedQuestions.has(questionIndex) ? 'Unflag Question' : 'Flag Question';
+                            flagButton.onclick = () => toggleFlag(questionIndex, flagButton, flashcard);
+
+                            if (isQuizMode) {
+                                // Quiz mode: display answer options
+                                const optionsContainer = document.createElement('div');
+                                optionsContainer.classList.add('options');
+                                question.options.forEach(option => {
+                                    const optionLabel = document.createElement('label');
+                                    optionLabel.classList.add('option-label');
+
+                                    const optionInput = document.createElement('input');
+                                    optionInput.type = 'radio';
+                                    optionInput.name = `question-${quizIndex}-${questionIndex}`;
+                                    optionInput.value = option;
+
+                                    optionLabel.appendChild(optionInput);
+                                    optionLabel.append(option);
+                                    optionsContainer.appendChild(optionLabel);
+                                });
+
+                                flashcard.appendChild(questionText);
+                                flashcard.appendChild(optionsContainer);
+                            } else {
+                                // Flashcard mode: display the correct answer when clicked
+                                const answerText = document.createElement('div');
+                                answerText.classList.add('answer');
+                                answerText.innerText = `Answer: ${question.correctAnswer}`;
+                                answerText.style.display = 'none';
+
+                                flashcard.onclick = () => {
+                                    answerText.style.display = answerText.style.display === 'none' ? 'block' : 'none';
+                                };
+
+                                flashcard.appendChild(questionText);
+                                flashcard.appendChild(answerText);
+                            }
+
+                            flashcard.appendChild(flagButton);
+                            quizBlock.appendChild(flashcard);
+                        });
+
                         flashcardContainer.appendChild(quizBlock);
                     });
                 })
@@ -153,10 +172,183 @@
                 });
         }
 
-        // Event listeners and additional logic
-        notifyUpcomingDeadlines(); 
-        loadFavorites();
-        loadFlashcards();
+        function toggleMode() {
+            isQuizMode = !isQuizMode;
+            modeToggle.innerText = isQuizMode ? 'Switch to Flashcard Mode' : 'Switch to Quiz Mode';
+            submitQuizButton.style.display = isQuizMode ? 'block' : 'none';
+            timerDisplay.style.display = isQuizMode ? 'block' : 'none';
+
+            if (isQuizMode) {
+                startTimer(5); // Example timer for 5 minutes
+            } else {
+                clearInterval(quizTimer);
+            }
+
+            loadFlashcards(); // Reload flashcards or quiz questions
+        }
+
+        pauseResumeButton.addEventListener("click", () => {
+            if (!quizTimer) {
+                alert("Timer is not active yet! Switch to Quiz Mode to start the timer.");
+                return;
+            }
+
+            if (isPaused) {
+                // Resume the timer
+                isPaused = false;
+                pauseResumeButton.innerText = "Pause";
+
+                // Resume the timer with the remaining time
+                startTimer(Math.ceil(remainingTime / 60)); // Resume timer with remaining time in minutes
+            } else {
+                // Pause the timer
+                isPaused = true;
+                pauseResumeButton.innerText = "Resume";
+
+                // Stop the timer and store the remaining time
+                clearInterval(quizTimer);
+            }
+        });
+
+        function startTimer(minutes) {
+            let timeLeft = remainingTime || minutes * 60;
+            remainingTime = timeLeft;
+            quizTimer = setInterval(() => {
+                if (!isPaused) {
+                    const min = Math.floor(timeLeft / 60);
+                    const sec = timeLeft % 60;
+                    document.getElementById("timer").innerText = `Time Remaining: ${min}:${sec < 10 ? "0" : ""}${sec}`;
+                    timeLeft--;
+                    remainingTime = timeLeft;
+
+                    if (timeLeft < 0) {
+                        clearInterval(quizTimer);
+                        document.getElementById("timer").innerText = "Time's up!";
+                        alert("Time's up! Please submit your answers.");
+                        document.getElementById("submitQuiz").click();
+                    }
+                }
+            }, 1000);
+        }
+
+        function toggleFlag(index, button, flashcardElement) {
+            if (flaggedQuestions.has(index)) {
+                flaggedQuestions.delete(index);
+                flashcardElement.style.backgroundColor = '';
+                button.innerText = 'Flag Question';
+                alert(`Question ${index + 1} unflagged.`);
+            } else {
+                flaggedQuestions.add(index);
+                flashcardElement.style.backgroundColor = '#ffcccb';
+                button.innerText = 'Unflag Question';
+                alert(`Question ${index + 1} flagged.`);
+            }
+        }
+
+        submitQuizButton.addEventListener("click", () => {
+            fetch('/get-quizzes')
+                .then(response => response.json())
+                .then(quizzes => {
+                    const activeQuiz = quizzes[0]; // Assuming one active quiz
+                    if (!checkDeadline(activeQuiz)) return; // Check deadline
+
+                    const submittedAnswers = [];
+                    document.querySelectorAll('.quiz-mode input[type="radio"]:checked').forEach(input => {
+                        submittedAnswers.push(input.value);
+                    });
+
+                    fetch('/submit-quiz', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(submittedAnswers)
+                    })
+                        .then(response => response.text())
+                        .then(result => {
+                            feedback.style.display = 'block';
+                            feedback.innerText = result;
+                            alert('Quiz submitted and archived successfully!');
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            alert('Failed to submit the quiz. Please try again.');
+                        });
+                });
+        });
+
+        archiveButton.addEventListener("click", () => {
+            fetch('/archive-and-clear-quiz', { method: 'POST' })
+                .then(response => response.ok ? response.text() : Promise.reject(response.text()))
+                .then(message => {
+                    alert(message);
+                    loadFlashcards(); // Reload flashcards
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert(`Error: ${error}`);
+                });
+        });
+
+        modeToggle.addEventListener("click", toggleMode);
+
+        notifyUpcomingDeadlines(); // Notify deadlines on page load
+        loadFlashcards(); // Load flashcards on page load
+
+        // START: Functions for Favorites Section (Tasks 3.3 and 3.4)
+
+        function loadFavorites() {
+            const favoritesContainer = document.getElementById('favoritesContainer');
+            const bookmarkedQuizzes = JSON.parse(localStorage.getItem('bookmarkedQuizzes')) || [];
+
+            if (bookmarkedQuizzes.length === 0) {
+                favoritesContainer.innerHTML = '<p>You have no favorite quizzes.</p>';
+                return;
+            }
+
+            // Fetch all quizzes from history to get details
+            fetch('/get-quiz-history')
+                .then(response => response.json())
+                .then(quizzes => {
+                    // Filter quizzes that are bookmarked
+                    const favoriteQuizzes = quizzes.filter(quiz => bookmarkedQuizzes.includes(quiz.title));
+
+                    if (favoriteQuizzes.length === 0) {
+                        favoritesContainer.innerHTML = '<p>You have no favorite quizzes.</p>';
+                        return;
+                    }
+
+                    favoriteQuizzes.forEach((quiz, quizIndex) => {
+                        const quizBlock = document.createElement('div');
+                        quizBlock.classList.add('quiz-block');
+
+                        quizBlock.innerHTML = `
+                            <h3>${quiz.title}</h3>
+                            <p><strong>Description:</strong> ${quiz.description}</p>
+                            <button class="remove-favorite-button" data-quiz-id="${quiz.title}">Remove from Favorites</button>
+                        `;
+
+                        const removeFavoriteButton = quizBlock.querySelector('.remove-favorite-button');
+                        removeFavoriteButton.addEventListener('click', () => {
+                            removeFromFavorites(quiz.title);
+                        });
+
+                        favoritesContainer.appendChild(quizBlock);
+                    });
+                })
+                .catch(error => console.error("Error loading favorite quizzes:", error));
+        }
+
+        function removeFromFavorites(quizId) {
+            let bookmarkedQuizzes = JSON.parse(localStorage.getItem('bookmarkedQuizzes')) || [];
+            bookmarkedQuizzes = bookmarkedQuizzes.filter(id => id !== quizId);
+            localStorage.setItem('bookmarkedQuizzes', JSON.stringify(bookmarkedQuizzes));
+
+            // Update the UI
+            document.getElementById('favoritesContainer').innerHTML = '';
+            loadFavorites();
+        }
+
+        // END: Functions for Favorites Section (Tasks 3.3 and 3.4)
+
     });
 </script>
 </body>
