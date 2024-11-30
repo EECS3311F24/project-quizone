@@ -51,19 +51,21 @@
                         <h2>Quiz ${index + 1}: ${quiz.title}</h2>
                         <p><strong>Description:</strong> ${quiz.description}</p>
                         <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
-                        <!-- START: New changes for Task 3.2 -->
+                        <!-- Added Difficulty Level -->
+                        <p><strong>Difficulty Level:</strong> ${quiz.difficulty || "Not Specified"}</p>
+
+                        <!-- START: Bookmark Button -->
                         <button class="bookmark-button" data-quiz-id="${quiz.title}">
                             ${bookmarks.includes(quiz.title) ? "Unbookmark" : "Bookmark"}
                         </button>
-                        <!-- END: New changes for Task 3.2 -->
+                        <!-- END: Bookmark Button -->
                     `;
 
-                    // START: New changes for Task 3.2
+                    // Add event listener for bookmark toggle
                     const bookmarkButton = quizBlock.querySelector(".bookmark-button");
                     bookmarkButton.addEventListener("click", () => {
                         toggleBookmark(quiz.title, bookmarkButton);
                     });
-                    // END: New changes for Task 3.2
 
                     historyContainer.appendChild(quizBlock);
                 });
@@ -71,7 +73,7 @@
             .catch(error => console.error("Error fetching quiz history:", error));
     }
 
-    // START: New changes for Task 3.2
+    // Functions for managing bookmarks
     function getBookmarks() {
         const bookmarks = localStorage.getItem("bookmarkedQuizzes");
         return bookmarks ? JSON.parse(bookmarks) : [];
@@ -98,7 +100,6 @@
 
         saveBookmarks(bookmarks);
     }
-    // END: New changes for Task 3.2
 
     function deleteHistory() {
         fetch("/delete-quiz-history", { method: "DELETE" })
@@ -115,6 +116,5 @@
 </script>
 </body>
 </html>
-
-                            
+                       
              
