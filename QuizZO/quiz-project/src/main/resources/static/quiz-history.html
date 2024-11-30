@@ -37,6 +37,8 @@
                 const historyContainer = document.getElementById("historyContainer");
                 historyContainer.innerHTML = ""; // Clear previous history
 
+                const bookmarks = getBookmarks(); // Retrieve bookmarks from localStorage
+
                 if (quizzes.length === 0) {
                     historyContainer.innerHTML = "<p>No quizzes found in history.</p>";
                     return;
@@ -49,45 +51,56 @@
                         <h2>Quiz ${index + 1}: ${quiz.title}</h2>
                         <p><strong>Description:</strong> ${quiz.description}</p>
                         <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
-                        <!-- Added Difficulty Ticket 2 Task 2.2 SP3-->
+                        <!-- Added Difficulty Level -->
                         <p><strong>Difficulty Level:</strong> ${quiz.difficulty || "Not Specified"}</p>
 
-                        ${
-                        quiz.description.includes("Score Received")
-                            ? `<p><strong>Score:</strong> ${
-                                quiz.description.match(/Score Received: (\d+)%/)[1]
-
-                         }%</p>`
-                            : ""   
-                    }
+                        <!-- START: Bookmark Button -->
+                        <button class="bookmark-button" data-quiz-id="${quiz.title}">
+                            ${bookmarks.includes(quiz.title) ? "Unbookmark" : "Bookmark"}
+                        </button>
+                        <!-- END: Bookmark Button -->
                     `;
-                    //---------------------------------------------ticket 1.2 SP3
-                    const scoreMatch = quiz.description.match(/Score Received: (\d+)%/);
-                    const score = scoreMatch ? parseInt(scoreMatch[1], 10) : null;
-                
-                    if (score && score >= 80) { // Threshold for certificate eligibility
-                        const certificateButton = document.createElement("button");
-                        certificateButton.innerText = "View Certificate";
-                        certificateButton.onclick = () => {
-                            const dataToStore = {
-                                title: quiz.title,
-                                score: score,
-                                date: new Date().toLocaleDateString()
-                            };
-                            console.log("Storing certificate data:", dataToStore); // Debugging line
-                            localStorage.setItem("certificateData", JSON.stringify(dataToStore));
-                            window.location.href = "certificate-template.html";
-                        };
-                        quizBlock.appendChild(certificateButton);
-                    }
-                    //------------------------------------------------ ticket 1.2 SP3
+
+                    // Add event listener for bookmark toggle
+                    const bookmarkButton = quizBlock.querySelector(".bookmark-button");
+                    bookmarkButton.addEventListener("click", () => {
+                        toggleBookmark(quiz.title, bookmarkButton);
+                    });
 
                     historyContainer.appendChild(quizBlock);
                 });
             })
-            .catch(error => console.error("Error fetching quiz history:", error)); 
-  }
-                            
+            .catch(error => console.error("Error fetching quiz history:", error));
+    }
+
+    // Functions for managing bookmarks
+    function getBookmarks() {
+        const bookmarks = localStorage.getItem("bookmarkedQuizzes");
+        return bookmarks ? JSON.parse(bookmarks) : [];
+    }
+
+    function saveBookmarks(bookmarks) {
+        localStorage.setItem("bookmarkedQuizzes", JSON.stringify(bookmarks));
+    }
+
+    function toggleBookmark(quizId, button) {
+        let bookmarks = getBookmarks();
+
+        if (bookmarks.includes(quizId)) {
+            // Remove the bookmark
+            bookmarks = bookmarks.filter(bookmark => bookmark !== quizId);
+            button.innerText = "Bookmark";
+            alert(`Removed bookmark for: ${quizId}`);
+        } else {
+            // Add the bookmark
+            bookmarks.push(quizId);
+            button.innerText = "Unbookmark";
+            alert(`Bookmarked: ${quizId}`);
+        }
+
+        saveBookmarks(bookmarks);
+    }
+
     function deleteHistory() {
         fetch("/delete-quiz-history", { method: "DELETE" })
             .then(response => {
@@ -103,5 +116,5 @@
 </script>
 </body>
 </html>
-                            
+                       
              
