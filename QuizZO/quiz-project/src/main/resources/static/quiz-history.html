@@ -37,6 +37,8 @@
                 const historyContainer = document.getElementById("historyContainer");
                 historyContainer.innerHTML = ""; // Clear previous history
 
+                const bookmarks = getBookmarks(); // Retrieve bookmarks from localStorage
+
                 if (quizzes.length === 0) {
                     historyContainer.innerHTML = "<p>No quizzes found in history.</p>";
                     return;
@@ -49,17 +51,21 @@
                         <h2>Quiz ${index + 1}: ${quiz.title}</h2>
                         <p><strong>Description:</strong> ${quiz.description}</p>
                         <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
-                        <!-- START: New changes for Task 3.1 -->
-                        <button class="bookmark-button" data-quiz-id="${quiz.title}">Bookmark</button>
-                        <!-- END: New changes for Task 3.1 -->
+                        <!-- Added Difficulty Level -->
+                        <p><strong>Difficulty Level:</strong> ${quiz.difficulty || "Not Specified"}</p>
+
+                        <!-- START: Bookmark Button -->
+                        <button class="bookmark-button" data-quiz-id="${quiz.title}">
+                            ${bookmarks.includes(quiz.title) ? "Unbookmark" : "Bookmark"}
+                        </button>
+                        <!-- END: Bookmark Button -->
                     `;
 
-               
+                    // Add event listener for bookmark toggle
                     const bookmarkButton = quizBlock.querySelector(".bookmark-button");
                     bookmarkButton.addEventListener("click", () => {
-                        bookmarkQuiz(quiz.title);
+                        toggleBookmark(quiz.title, bookmarkButton);
                     });
-                    // Task 3.1
 
                     historyContainer.appendChild(quizBlock);
                 });
@@ -67,11 +73,33 @@
             .catch(error => console.error("Error fetching quiz history:", error));
     }
 
-    //Task 3.1
-    function bookmarkQuiz(quizId) {
-        alert(`Bookmarking quiz: ${quizId}`);
+    // Functions for managing bookmarks
+    function getBookmarks() {
+        const bookmarks = localStorage.getItem("bookmarkedQuizzes");
+        return bookmarks ? JSON.parse(bookmarks) : [];
     }
-    //Task 3.1
+
+    function saveBookmarks(bookmarks) {
+        localStorage.setItem("bookmarkedQuizzes", JSON.stringify(bookmarks));
+    }
+
+    function toggleBookmark(quizId, button) {
+        let bookmarks = getBookmarks();
+
+        if (bookmarks.includes(quizId)) {
+            // Remove the bookmark
+            bookmarks = bookmarks.filter(bookmark => bookmark !== quizId);
+            button.innerText = "Bookmark";
+            alert(`Removed bookmark for: ${quizId}`);
+        } else {
+            // Add the bookmark
+            bookmarks.push(quizId);
+            button.innerText = "Unbookmark";
+            alert(`Bookmarked: ${quizId}`);
+        }
+
+        saveBookmarks(bookmarks);
+    }
 
     function deleteHistory() {
         fetch("/delete-quiz-history", { method: "DELETE" })
@@ -88,6 +116,5 @@
 </script>
 </body>
 </html>
-
-                            
+                       
              
