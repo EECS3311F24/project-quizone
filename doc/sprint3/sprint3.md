@@ -16,6 +16,7 @@ Task 1.2: Enable certificate display after quiz submission.
 Add a "View Certificate" button on the Quiz History page for quizzes with scores above a threshold (e.g., 80%).
 Task 1.3: Implement a simple certificate generator.
 Replace placeholders in the template with real data from the submitted quiz.
+
 Ticket 2: Set Difficulty Levels
 Assigned to: [Tejleen]
 Aligned with User Story:
@@ -28,6 +29,7 @@ Task 2.2: Update the backend to save the difficulty level for each quiz.
 Ensure the difficulty is stored in the quiz data model.
 Task 2.3: Display the difficulty level on the quiz flashcards page.
 Add a tag or label (e.g., "Difficulty: Medium") for each quiz.
+
 Ticket 3: Bookmark Favorite Quizzes
 Assigned to: [Karine]
 Aligned with User Story:
