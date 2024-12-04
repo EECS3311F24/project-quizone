@@ -4,6 +4,9 @@ Sprint 3 tickets:
 Team Contribution Summary
 All team members were present and participated.
 
+
+The user stories that are not completed in this sprint were either implicitly addressed through existing features or deprioritized during the planning process because they did not align with the essential functionality we aimed to deliver. The sprints focused on implementing core capabilities like quiz creation, automatic grading, history tracking, and performance feedback, which were foundational to the platform's primary goals. Features such as group assignments, real-time feedback for teachers, and leaderboard functionality were seen as enhancements rather than necessities, and their absence does not hinder the platform's ability to function effectively. Additionally, some of these features overlapped conceptually with implemented functionalities, reducing their urgency. Prioritizing key features ensured we delivered a functional and robust platform within the sprint timelines.
+
 Ticket 1: Certificate of Completion
 Assigned to: [Shaqayeq]
 Aligned with User Story:
