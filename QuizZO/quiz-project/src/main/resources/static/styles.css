@@ -1,0 +1,205 @@
+/* General body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Main heading style */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Form styling */
+form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Label styling */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Input and textarea styles */
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Textarea resize control */
+textarea {
+    resize: vertical;
+}
+
+/* Button base styling */
+button {
+    display: block;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Container for flashcards */
+#flashcardContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Flashcard base styling */
+.flashcard {
+    background-color: #ffffff;
+    width: 270px;
+    height: 170px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Flashcard hover effect */
+.flashcard:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Answer text styling */
+.answer {
+    color: #007bff;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Options container styling */
+.options {
+    margin-top: 10px;
+}
+
+/* Option button styling */
+.option-button {
+    display: block;
+    background-color: #f1f1f1;
+    border: none;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Option button hover effect */
+.option-button:hover {
+    background-color: #e0e0e0;
+}
+
+/* Feedback section styling */
+#feedback {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 20px;
+    color: #333;
+}
+
+/* Option label styling */
+.option-label {
+    display: block;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+/* Input within option label */
+.option-label input {
+    margin-right: 8px;
+}
+
+/* Mode toggle button styling */
+#modeToggle {
+    display: block;
+    margin: 20px auto;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Mode toggle button hover effect */
+#modeToggle:hover {
+    background-color: #0056b3;
+}
+
+/* Submit quiz button styling */
+#submitQuiz {
+    display: block;
+    margin: 20px auto;
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Submit quiz button hover effect */
+#submitQuiz:hover {
+    background-color: #218838;
+}
+
+/* Flashcard styles for different modes */
+.flashcard.quiz-mode {
+    background-color: #f0f0f5;
+    border: 2px solid #007bff;
+}
+
+.flashcard.flashcard-mode {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+}
+
+/* Selected option button highlight */
+.option-button.selected {
+    background-color: #d3d3d3;
+    font-weight: bold;
+}

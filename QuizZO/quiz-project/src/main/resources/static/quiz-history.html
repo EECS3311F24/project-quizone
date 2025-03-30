@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz History</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Quiz History</h1>
+<div id="historyContainer"></div>
+
+<!-- Navigation buttons -->
+<div class="navigation-buttons">
+    <button onclick="window.location.href='form-creation.html'">Create a New Quiz</button>
+    <button onclick="window.location.href='flashcards.html'">Go to Flashcards</button>
+</div>
+
+<!-- Delete history button -->
+<div class="navigation-buttons">
+    <button onclick="deleteHistory()">Delete Quiz History</button>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        loadQuizHistory();
+    });
+
+    function loadQuizHistory() {
+        fetch('/get-quiz-history')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch quiz history.");
+                }
+                return response.json();
+            })
+            .then(quizzes => {
+                const historyContainer = document.getElementById("historyContainer");
+                historyContainer.innerHTML = ""; // Clear previous history
+
+                const bookmarks = getBookmarks(); // Retrieve bookmarks from localStorage
+
+                if (quizzes.length === 0) {
+                    historyContainer.innerHTML = "<p>No quizzes found in history.</p>";
+                    return;
+                }
+
+                quizzes.forEach((quiz, index) => {
+                    const quizBlock = document.createElement("div");
+                    quizBlock.classList.add("quiz-block");
+                    quizBlock.innerHTML = `
+                        <h2>Quiz ${index + 1}: ${quiz.title}</h2>
+                        <p><strong>Description:</strong> ${quiz.description}</p>
+                        <p><strong>Number of Questions:</strong> ${quiz.questions.length}</p>
+                        <!-- START: New changes for Task 3.2 -->
+                        <button class="bookmark-button" data-quiz-id="${quiz.title}">
+                            ${bookmarks.includes(quiz.title) ? "Unbookmark" : "Bookmark"}
+                        </button>
+                        <!-- END: New changes for Task 3.2 -->
+                    `;
+
+                    // START: New changes for Task 3.2
+                    const bookmarkButton = quizBlock.querySelector(".bookmark-button");
+                    bookmarkButton.addEventListener("click", () => {
+                        toggleBookmark(quiz.title, bookmarkButton);
+                    });
+                    // END: New changes for Task 3.2
+
+                    historyContainer.appendChild(quizBlock);
+                });
+            })
+            .catch(error => console.error("Error fetching quiz history:", error));
+    }
+
+    // START: New changes for Task 3.2
+    function getBookmarks() {
+        const bookmarks = localStorage.getItem("bookmarkedQuizzes");
+        return bookmarks ? JSON.parse(bookmarks) : [];
+    }
+
+    function saveBookmarks(bookmarks) {
+        localStorage.setItem("bookmarkedQuizzes", JSON.stringify(bookmarks));
+    }
+
+    function toggleBookmark(quizId, button) {
+        let bookmarks = getBookmarks();
+
+        if (bookmarks.includes(quizId)) {
+            // Remove the bookmark
+            bookmarks = bookmarks.filter(bookmark => bookmark !== quizId);
+            button.innerText = "Bookmark";
+            alert(`Removed bookmark for: ${quizId}`);
+        } else {
+            // Add the bookmark
+            bookmarks.push(quizId);
+            button.innerText = "Unbookmark";
+            alert(`Bookmarked: ${quizId}`);
+        }
+
+        saveBookmarks(bookmarks);
+    }
+    // END: New changes for Task 3.2
+
+    function deleteHistory() {
+        fetch("/delete-quiz-history", { method: "DELETE" })
+            .then(response => {
+                if (response.ok) {
+                    alert("Quiz history deleted successfully!");
+                    location.reload();
+                } else {
+                    alert("Failed to delete quiz history.");
+                }
+            })
+            .catch(error => console.error("Error deleting history:", error));
+    }
+</script>
+</body>
+</html>
+
+                       
+             
